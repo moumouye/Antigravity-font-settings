@@ -1,0 +1,7 @@
+{
+  "name": "antigravity-font-settings",
+  "display_name": "Font Settings",
+  "description": "Customize sidebar, conversation, and code block font sizes and typography in Antigravity.",
+  "version": "1.0.0",
+  "logo": "assets/logo.svg"
+}

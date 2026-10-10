@@ -1,0 +1,9 @@
+{
+  "command": "node",
+  "args": [
+    "main.mjs"
+  ],
+  "restart_policy": "always",
+  "display_name": "Font Settings Engine",
+  "description": "Custom font sizes and typography injector for Antigravity"
+}
