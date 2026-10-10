@@ -24,13 +24,15 @@
 ## 安装与使用
 
 ### 1. 启动管理器或安装插件
-在项目目录下直接运行：
+本项目管理脚本基于 Python 3 标准库开发，**零第三方依赖**，无需通过 pip 安装任何外部包。在项目目录下直接运行：
 ```bash
-uv run manage.py
+python3 manage.py
 ```
+*(若环境已配置 `uv`，亦可直接执行 `uv run manage.py`)*
+
 终端将自动弹出交互式数字菜单，按提示输入 `1` 即可一键完成安装与启用；也可以直接通过命令行参数执行：
 ```bash
-uv run manage.py install
+python3 manage.py install
 ```
 
 ### 2. 重启 Antigravity
@@ -45,16 +47,16 @@ uv run manage.py install
 
 ## 管理命令
 
-直接运行 `uv run manage.py` 进入数字控制台，或通过参数直接执行：
+直接运行 `python3 manage.py`（或 `uv run manage.py`）进入数字控制台，或通过参数直接执行：
 
-| 操作 | 命令 | 说明 |
+| 操作 | 常用命令 | 说明 |
 | :--- | :--- | :--- |
-| **交互控制台** | `uv run manage.py` | 启动极简交互菜单，按数字键 [0-5] 选取操作 |
-| 查看状态 | `uv run manage.py status` | 查看插件安装、字号配置数据与后台引擎状态 |
-| 安装启用 | `uv run manage.py install` | 建立软链接并在配置中启用 |
-| 启用插件 | `uv run manage.py enable` | 激活插件并自动继承已保存的历史字体配置 |
-| 禁用插件 | `uv run manage.py disable` | 暂时停用插件并释放进程，完整保留字体配置 |
-| 彻底卸载 | `uv run manage.py uninstall` | 纯净卸载，清理软链接、配置条目与数据缓存（零残留） |
+| **交互控制台** | `python3 manage.py` | 启动极简交互菜单，按数字键 [0-5] 选取操作 |
+| 查看状态 | `python3 manage.py status` | 查看插件安装、字号配置数据与后台引擎状态 |
+| 安装启用 | `python3 manage.py install` | 建立软链接并在配置中启用 |
+| 启用插件 | `python3 manage.py enable` | 激活插件并自动继承已保存的历史字体配置 |
+| 禁用插件 | `python3 manage.py disable` | 暂时停用插件并释放进程，完整保留字体配置 |
+| 彻底卸载 | `python3 manage.py uninstall` | 纯净卸载：清理软链接、配置条目、运行数据及系统残留空文件夹（零残留） |
 
 ---
 

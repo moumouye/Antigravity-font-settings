@@ -17,6 +17,7 @@ PLUGINS_DIR = CONFIG_DIR / "plugins"
 PLUGIN_TARGET = PLUGINS_DIR / "antigravity-font-settings"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 SIDECAR_DATA_DIR = HOME / ".gemini" / "antigravity" / "sidecar_data" / "antigravity-font-settings"
+PLUGIN_DATA_DIR = HOME / ".gemini" / "antigravity" / "plugin_data" / "antigravity-font-settings"
 PREFS_FILE = SIDECAR_DATA_DIR / "engine" / "data" / "preferences.json"
 
 
@@ -128,7 +129,7 @@ def uninstall_plugin(deep: bool = True):
     if killed_count > 0:
         print(f"[OK] 已停止 {killed_count} 个后台引擎进程。")
 
-    print("\n--- [2/4] 移除插件软链接与目录 ---")
+    print("\n--- [2/5] 移除插件软链接与安装目录 ---")
     if PLUGIN_TARGET.is_symlink():
         PLUGIN_TARGET.unlink()
         print(f"[OK] 已移除软链接: {PLUGIN_TARGET}")
@@ -136,9 +137,9 @@ def uninstall_plugin(deep: bool = True):
         shutil.rmtree(PLUGIN_TARGET)
         print(f"[OK] 已移除插件目录: {PLUGIN_TARGET}")
     else:
-        print("[INFO] 插件目录不存在，无需清理。")
+        print("[INFO] 插件安装目录/软链接不存在。")
 
-    print("\n--- [3/4] 清理系统配置文件注册项 ---")
+    print("\n--- [3/5] 清理系统配置文件注册项 ---")
     config = load_json(CONFIG_FILE, {})
     modified = False
 
@@ -159,22 +160,40 @@ def uninstall_plugin(deep: bool = True):
     else:
         print("[INFO] config.json 中无残留注册项。")
 
-    print("\n--- [4/4] 清理用户偏好数据与缓存 ---")
-    if deep and SIDECAR_DATA_DIR.exists():
-        try:
-            shutil.rmtree(SIDECAR_DATA_DIR)
-            print(f"[OK] 已彻底清除配置与日志数据: {SIDECAR_DATA_DIR}")
-        except Exception as e:
-            print(f"[WARN] 清理数据目录失败: {e}")
-    else:
-        print("[INFO] 数据目录不存在，无需清理。")
+    print("\n--- [4/5] 递归清除关联数据目录与宿主残留文件夹 ---")
+    if deep:
+        # 清理 Sidecar 数据与日志目录
+        if SIDECAR_DATA_DIR.exists():
+            try:
+                shutil.rmtree(SIDECAR_DATA_DIR)
+                print(f"[OK] 已彻底清除 Sidecar 数据目录: {SIDECAR_DATA_DIR}")
+            except Exception as e:
+                print(f"[WARN] 清除 Sidecar 数据目录失败: {e}")
+        else:
+            print("[INFO] Sidecar 数据目录不存在。")
 
+        # 清理 Antigravity 自动分配的插件数据文件夹（哪怕是空文件夹也彻底删除）
+        if PLUGIN_DATA_DIR.exists():
+            try:
+                shutil.rmtree(PLUGIN_DATA_DIR)
+                print(f"[OK] 已彻底删除宿主生成的插件数据空文件夹: {PLUGIN_DATA_DIR}")
+            except Exception as e:
+                print(f"[WARN] 删除插件数据文件夹失败: {e}")
+        else:
+            print("[INFO] 插件数据文件夹不存在。")
+
+    print("\n--- [5/5] 清理本地工程临时数据与日志 ---")
     local_sidecar_data = SOURCE_DIR / "sidecars" / "engine" / "data"
     if local_sidecar_data.exists():
         shutil.rmtree(local_sidecar_data)
-        print(f"[OK] 已清理本地临时数据: {local_sidecar_data}")
+        print(f"[OK] 已清理本地临时数据目录: {local_sidecar_data}")
 
-    print("\n[完成] 彻底纯净卸载完毕！系统内零残留。")
+    local_sidecar_logs = SOURCE_DIR / "sidecars" / "engine" / "logs"
+    if local_sidecar_logs.exists():
+        shutil.rmtree(local_sidecar_logs)
+        print(f"[OK] 已清理本地临时日志目录: {local_sidecar_logs}")
+
+    print("\n[完成] 彻底纯净卸载完毕！所有相关文件及对应空文件夹已全部删除，系统内零残留。")
 
 
 def set_enabled(enable: bool):
