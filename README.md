@@ -23,12 +23,15 @@
 
 ## 安装与使用
 
-### 1. 安装插件
-在项目目录下执行：
+### 1. 启动管理器或安装插件
+在项目目录下直接运行：
 ```bash
-python3 manage.py install
+uv run manage.py
 ```
-*(如使用 uv 也可执行 `uv run python manage.py install`)*
+终端将自动弹出交互式数字菜单，按提示输入 `1` 即可一键完成安装与启用；也可以直接通过命令行参数执行：
+```bash
+uv run manage.py install
+```
 
 ### 2. 重启 Antigravity
 完全退出并重新打开 Antigravity 客户端。
@@ -42,12 +45,17 @@ python3 manage.py install
 
 ## 管理命令
 
+直接运行 `uv run manage.py` 进入数字控制台，或通过参数直接执行：
+
 | 操作 | 命令 | 说明 |
 | :--- | :--- | :--- |
-| 查看状态 | `python3 manage.py status` | 查看插件安装与 Electron 调试通道连接状态 |
-| 启用插件 | `python3 manage.py enable` | 在配置文件中启用插件 |
-| 停用插件 | `python3 manage.py disable` | 在配置文件中停用插件 |
-| 卸载插件 | `python3 manage.py uninstall` | 完全卸载并清理配置 |
+| **交互菜单** | `uv run manage.py` | 启动终端交互控制台，按数字键 [0-6] 选择执行 |
+| 查看状态 | `uv run manage.py status` | 查看插件安装、Sidecar 进程与 CDP 通道状态 |
+| 安装启用 | `uv run manage.py install` | 建立软链接并在配置中启用 |
+| 启用插件 | `uv run manage.py enable` | 在配置文件中启用插件 |
+| 停用插件 | `uv run manage.py disable` | 在配置文件中停用插件 |
+| 重启引擎 | `uv run manage.py restart` | 终止现有 Sidecar 进程以触发守护重启 |
+| 彻底卸载 | `uv run manage.py uninstall` | 纯净卸载，清理软链接、配置条目与数据缓存（零残留） |
 
 ---
 

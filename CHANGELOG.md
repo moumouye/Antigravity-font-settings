@@ -6,6 +6,11 @@
 
 ## [Unreleased]
 
+- ✨ `manage.py` 新增终端交互式数字控制台，运行 `uv run manage.py` 可直接通过键盘数字 [0-6] 选择执行对应操作
+- 🧹 `manage.py` 增强彻底纯净卸载（Deep Clean）能力，联动终止 Sidecar Helper 进程并同步清理 `config.json` 注册表与 `sidecar_data` 缓存
+- 🔧 新增 `restart` 命令支持一键重启/重载 Sidecar 引擎进程
+- 📝 更新使用文档，推荐统一采用 `uv run manage.py` 进行生命周期管理
+
 ---
 
 ## [1.0.0] - 2026-10-10
