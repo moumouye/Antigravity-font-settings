@@ -49,12 +49,11 @@ uv run manage.py install
 
 | 操作 | 命令 | 说明 |
 | :--- | :--- | :--- |
-| **交互菜单** | `uv run manage.py` | 启动终端交互控制台，按数字键 [0-6] 选择执行 |
-| 查看状态 | `uv run manage.py status` | 查看插件安装、Sidecar 进程与 CDP 通道状态 |
+| **交互控制台** | `uv run manage.py` | 启动极简交互菜单，按数字键 [0-5] 选取操作 |
+| 查看状态 | `uv run manage.py status` | 查看插件安装、字号配置数据与后台引擎状态 |
 | 安装启用 | `uv run manage.py install` | 建立软链接并在配置中启用 |
-| 启用插件 | `uv run manage.py enable` | 在配置文件中启用插件 |
-| 停用插件 | `uv run manage.py disable` | 在配置文件中停用插件 |
-| 重启引擎 | `uv run manage.py restart` | 终止现有 Sidecar 进程以触发守护重启 |
+| 启用插件 | `uv run manage.py enable` | 激活插件并自动继承已保存的历史字体配置 |
+| 禁用插件 | `uv run manage.py disable` | 暂时停用插件并释放进程，完整保留字体配置 |
 | 彻底卸载 | `uv run manage.py uninstall` | 纯净卸载，清理软链接、配置条目与数据缓存（零残留） |
 
 ---

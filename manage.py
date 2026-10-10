@@ -17,6 +17,7 @@ PLUGINS_DIR = CONFIG_DIR / "plugins"
 PLUGIN_TARGET = PLUGINS_DIR / "antigravity-font-settings"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 SIDECAR_DATA_DIR = HOME / ".gemini" / "antigravity" / "sidecar_data" / "antigravity-font-settings"
+PREFS_FILE = SIDECAR_DATA_DIR / "engine" / "data" / "preferences.json"
 
 
 def load_json(path: Path, default=None):
@@ -57,7 +58,7 @@ def kill_sidecar_processes(verbose: bool = True) -> int:
     pids = get_sidecar_pids()
     if not pids:
         if verbose:
-            print("[INFO] No running Sidecar process detected.")
+            print("[INFO] 当前无后台 Sidecar 进程运行。")
         return 0
 
     killed = 0
@@ -65,22 +66,21 @@ def kill_sidecar_processes(verbose: bool = True) -> int:
         try:
             os.kill(pid, signal.SIGTERM)
             if verbose:
-                print(f"[INFO] Sent SIGTERM to Sidecar process (PID: {pid}).")
+                print(f"[INFO] 已向 Sidecar 进程发送停止信号 (PID: {pid})。")
             killed += 1
         except ProcessLookupError:
             pass
         except Exception as e:
             if verbose:
-                print(f"[WARN] Failed to terminate PID {pid}: {e}")
+                print(f"[WARN] 停止进程 PID {pid} 失败: {e}")
 
-    # Give process 0.5s to exit gracefully, force kill if lingering
     time.sleep(0.5)
     remaining_pids = get_sidecar_pids()
     for pid in remaining_pids:
         try:
             os.kill(pid, signal.SIGKILL)
             if verbose:
-                print(f"[INFO] Sent SIGKILL to lingering Sidecar process (PID: {pid}).")
+                print(f"[INFO] 强制终止残留 Sidecar 进程 (PID: {pid})。")
         except Exception:
             pass
 
@@ -89,7 +89,7 @@ def kill_sidecar_processes(verbose: bool = True) -> int:
 
 def install_plugin():
     """Install plugin by linking to ~/.gemini/config/plugins and registering in config.json."""
-    print("\n--- [1/2] Installing Plugin Link ---")
+    print("\n--- [1/2] 安装插件软链接 ---")
     PLUGINS_DIR.mkdir(parents=True, exist_ok=True)
 
     if PLUGIN_TARGET.exists() or PLUGIN_TARGET.is_symlink():
@@ -98,110 +98,126 @@ def install_plugin():
                 PLUGIN_TARGET.unlink()
             else:
                 shutil.rmtree(PLUGIN_TARGET)
-            print(f"[OK] Cleaned previous installation: {PLUGIN_TARGET}")
+            print(f"[OK] 已清理旧安装路径: {PLUGIN_TARGET}")
         except Exception as e:
-            print(f"[ERROR] Failed to remove existing target: {e}")
+            print(f"[ERROR] 清理旧安装失败: {e}")
             return
 
     try:
         PLUGIN_TARGET.symlink_to(SOURCE_DIR, target_is_directory=True)
-        print(f"[OK] Created symlink: {PLUGIN_TARGET} -> {SOURCE_DIR}")
+        print(f"[OK] 已创建软链接: {PLUGIN_TARGET} -> {SOURCE_DIR}")
     except OSError:
         shutil.copytree(SOURCE_DIR, PLUGIN_TARGET, symlinks=True)
-        print(f"[OK] Copied plugin to: {PLUGIN_TARGET}")
+        print(f"[OK] 已拷贝插件到: {PLUGIN_TARGET}")
 
-    print("\n--- [2/2] Updating Config Registry ---")
+    print("\n--- [2/2] 注册并启用插件 ---")
     config = load_json(CONFIG_FILE, {})
     plugins = config.setdefault("plugins", {})
     plugins["antigravity-font-settings"] = {"enabled": True}
     save_json(CONFIG_FILE, config)
-    print(f"[OK] Enabled plugin in: {CONFIG_FILE}")
+    print(f"[OK] 已在 {CONFIG_FILE} 中启用插件。")
 
-    print("\n[SUCCESS] Installation complete!")
-    print("Tip: If Antigravity is currently running, restart it to launch the Sidecar engine.")
+    print("\n[完成] 插件已安装并启用！")
+    print("提示: 若 Antigravity 正在运行，请重启客户端以加载字体设置插件。")
 
 
 def uninstall_plugin(deep: bool = True):
     """Deep clean uninstall: terminate process, remove symlinks, clear config entries & cache."""
-    print("\n--- [1/4] Stopping Running Sidecar Process ---")
+    print("\n--- [1/4] 停止运行中的后台引擎 ---")
     killed_count = kill_sidecar_processes(verbose=True)
     if killed_count > 0:
-        print(f"[OK] Stopped {killed_count} active Sidecar process(es).")
+        print(f"[OK] 已停止 {killed_count} 个后台引擎进程。")
 
-    print("\n--- [2/4] Removing Plugin Directory / Symlink ---")
+    print("\n--- [2/4] 移除插件软链接与目录 ---")
     if PLUGIN_TARGET.is_symlink():
         PLUGIN_TARGET.unlink()
-        print(f"[OK] Removed symlink: {PLUGIN_TARGET}")
+        print(f"[OK] 已移除软链接: {PLUGIN_TARGET}")
     elif PLUGIN_TARGET.exists():
         shutil.rmtree(PLUGIN_TARGET)
-        print(f"[OK] Removed plugin directory: {PLUGIN_TARGET}")
+        print(f"[OK] 已移除插件目录: {PLUGIN_TARGET}")
     else:
-        print("[INFO] Plugin symlink/directory not present.")
+        print("[INFO] 插件目录不存在，无需清理。")
 
-    print("\n--- [3/4] Purging Configuration Registry ---")
+    print("\n--- [3/4] 清理系统配置文件注册项 ---")
     config = load_json(CONFIG_FILE, {})
     modified = False
 
-    # Remove plugins entry
     plugins = config.get("plugins", {})
     if "antigravity-font-settings" in plugins:
         del plugins["antigravity-font-settings"]
         modified = True
-        print("[OK] Removed entry from config.json ['plugins'].")
+        print("[OK] 已从 config.json 清理 ['plugins'] 注册项。")
 
-    # Remove sidecars entry
     sidecars = config.get("sidecars", {})
     if "antigravity-font-settings/engine" in sidecars:
         del sidecars["antigravity-font-settings/engine"]
         modified = True
-        print("[OK] Removed entry from config.json ['sidecars'].")
+        print("[OK] 已从 config.json 清理 ['sidecars'] 注册项。")
 
     if modified:
         save_json(CONFIG_FILE, config)
     else:
-        print("[INFO] No registry entries found in config.json.")
+        print("[INFO] config.json 中无残留注册项。")
 
-    print("\n--- [4/4] Purging Sidecar Data & Cache ---")
+    print("\n--- [4/4] 清理用户偏好数据与缓存 ---")
     if deep and SIDECAR_DATA_DIR.exists():
         try:
             shutil.rmtree(SIDECAR_DATA_DIR)
-            print(f"[OK] Purged sidecar data directory: {SIDECAR_DATA_DIR}")
+            print(f"[OK] 已彻底清除配置与日志数据: {SIDECAR_DATA_DIR}")
         except Exception as e:
-            print(f"[WARN] Failed to purge sidecar data: {e}")
+            print(f"[WARN] 清理数据目录失败: {e}")
     else:
-        print("[INFO] No sidecar data directory remaining.")
+        print("[INFO] 数据目录不存在，无需清理。")
 
-    # Clean local ephemeral files if present
     local_sidecar_data = SOURCE_DIR / "sidecars" / "engine" / "data"
     if local_sidecar_data.exists():
         shutil.rmtree(local_sidecar_data)
-        print(f"[OK] Cleaned local sidecar data: {local_sidecar_data}")
+        print(f"[OK] 已清理本地临时数据: {local_sidecar_data}")
 
-    print("\n[SUCCESS] Deep clean uninstallation complete! Zero residual files left.")
+    print("\n[完成] 彻底纯净卸载完毕！系统内零残留。")
 
 
 def set_enabled(enable: bool):
-    """Enable or disable plugin in config.json."""
+    """Enable or disable plugin in config.json with state preservation feedback."""
     config = load_json(CONFIG_FILE, {})
     plugins = config.setdefault("plugins", {})
     entry = plugins.setdefault("antigravity-font-settings", {})
     entry["enabled"] = enable
     save_json(CONFIG_FILE, config)
-    status_text = "enabled" if enable else "disabled"
-    print(f"\n[OK] Plugin is now {status_text} in config.json.")
+
+    if not enable:
+        # Automatically stop background process to release resources
+        kill_sidecar_processes(verbose=False)
+        print("\n[OK] 插件已禁用（后台进程已同步释放）。")
+        print("[状态保留] 您的自定义字号、行高等配置已完好保存在本地，绝不会丢失；重新启用即可恢复。")
+    else:
+        print("\n[OK] 插件已重新启用。")
+        print("[状态恢复] 已加载历史字体设置，重启 Antigravity 后即刻生效。")
 
 
 def check_status():
     """Inspect and report current plugin and engine status."""
     installed = PLUGIN_TARGET.exists() or PLUGIN_TARGET.is_symlink()
-    link_type = "Symlink" if PLUGIN_TARGET.is_symlink() else "Directory"
+    link_type = "软链接" if PLUGIN_TARGET.is_symlink() else "实体目录"
 
     config = load_json(CONFIG_FILE, {})
     is_enabled = config.get("plugins", {}).get("antigravity-font-settings", {}).get("enabled", False)
     sidecar_registered = "antigravity-font-settings/engine" in config.get("sidecars", {})
 
     pids = get_sidecar_pids()
-    sidecar_data_exists = SIDECAR_DATA_DIR.exists()
+
+    # Read user preferences
+    prefs_summary = "未配置 (默认预设)"
+    if PREFS_FILE.exists():
+        try:
+            prefs = json.loads(PREFS_FILE.read_text(encoding="utf-8"))
+            main_sz = prefs.get("mainFontSize", 15)
+            side_sz = prefs.get("sidebarFontSize", 14)
+            code_sz = prefs.get("codeFontSize", 13)
+            lh = prefs.get("lineHeight", 1.6)
+            prefs_summary = f"正文 {main_sz}px | 侧栏 {side_sz}px | 代码 {code_sz}px | 行高 {lh}"
+        except Exception:
+            prefs_summary = "已保存 (读取异常)"
 
     # Check DevTools port
     if sys.platform == "darwin":
@@ -212,56 +228,41 @@ def check_status():
         profile = Path(os.environ.get("XDG_CONFIG_HOME", str(HOME / ".config"))) / "Antigravity"
 
     port_file = profile / "DevToolsActivePort"
-    port_status = "Not running"
+    port_status = "未运行"
     if port_file.exists():
         try:
             port = port_file.read_text().splitlines()[0].strip()
-            port_status = f"Active (CDP Port: {port})"
+            port_status = f"运行中 (CDP 调试端口: {port})"
         except Exception:
-            port_status = "Active (Port file readable)"
+            port_status = "运行中"
 
     print("\n========================================================")
-    print("        Antigravity Font Settings - Status Report       ")
+    print("          Antigravity 字体设置 - 状态总览               ")
     print("========================================================")
-    print(f"  Plugin Installed:   {'Yes (' + link_type + ')' if installed else 'No'}")
-    print(f"  Plugin Enabled:     {'Yes' if is_enabled else 'No'}")
-    print(f"  Sidecar Registered: {'Yes' if sidecar_registered else 'No'}")
-    if pids:
-        print(f"  Sidecar Process:    Running (PID: {', '.join(map(str, pids))})")
-    else:
-        print("  Sidecar Process:    Not running")
-    print(f"  Sidecar User Data:  {'Exists (' + str(SIDECAR_DATA_DIR) + ')' if sidecar_data_exists else 'Clean (None)'}")
-    print(f"  Host App Status:    {port_status}")
+    print(f"  安装状态:       {'已安装 (' + link_type + ')' if installed else '未安装'}")
+    print(f"  启用状态:       {'已启用' if is_enabled else '已禁用'}")
+    print(f"  后台引擎进程:   {'运行中 (PID: ' + ', '.join(map(str, pids)) + ')' if pids else '未启动'}")
+    print(f"  用户字体配置:   {prefs_summary}")
+    print(f"  宿主应用状态:   {port_status}")
     print("========================================================")
-
-
-def restart_sidecar():
-    """Restart Sidecar engine by terminating running process for supervisor reload."""
-    print("\n--- Restarting Sidecar Engine ---")
-    killed = kill_sidecar_processes(verbose=True)
-    if killed > 0:
-        print("[OK] Existing engine stopped. Antigravity supervisor will respawn it automatically.")
-    else:
-        print("[INFO] Engine was not running. If Antigravity is open, it will launch on next request.")
 
 
 def interactive_menu():
-    """Display interactive numeric menu in terminal."""
+    """Display streamlined interactive numeric menu in terminal."""
     while True:
         print("\n========================================================")
         print("         Antigravity 字体设置插件管理器 (v1.0.0)         ")
         print("========================================================")
-        print("  [1] 安装并启用插件 (Install & Enable)")
-        print("  [2] 彻底纯净卸载插件 (Deep Clean Uninstall)")
-        print("  [3] 查看当前插件与引擎状态 (Check Status)")
-        print("  [4] 启用插件 (Enable)")
-        print("  [5] 禁用插件 (Disable)")
-        print("  [6] 重启/停止 Sidecar 引擎进程 (Restart Sidecar)")
+        print("  [1] 安装并启用插件 (Install)")
+        print("  [2] 彻底卸载插件 (Uninstall - 清理所有配置与数据)")
+        print("  [3] 查看当前状态 (Status - 含已存字号与运行状态)")
+        print("  [4] 启用插件 (Enable - 激活并恢复历史字体设置)")
+        print("  [5] 禁用插件 (Disable - 暂时停用，保留字体设置)")
         print("  [0] 退出管理器 (Exit)")
         print("========================================================")
 
         try:
-            choice = input("请输入选项序号 [0-6]: ").strip()
+            choice = input("请输入选项序号 [0-5]: ").strip()
         except (KeyboardInterrupt, EOFError):
             print("\n\n已退出管理器。")
             break
@@ -276,13 +277,11 @@ def interactive_menu():
             set_enabled(True)
         elif choice == "5":
             set_enabled(False)
-        elif choice == "6":
-            restart_sidecar()
         elif choice == "0":
             print("\n已退出管理器。")
             break
         else:
-            print(f"\n[!] 无效选项: '{choice}'，请输入 0 到 6 之间的数字。")
+            print(f"\n[!] 无效选项: '{choice}'，请输入 0 到 5 之间的数字。")
 
         try:
             input("\n按回车键继续...")
@@ -300,7 +299,7 @@ def main():
         "action",
         nargs="?",
         default=None,
-        choices=["install", "uninstall", "enable", "disable", "status", "restart"],
+        choices=["install", "uninstall", "enable", "disable", "status"],
         help="Action to execute (leave empty for interactive menu)",
     )
     args = parser.parse_args()
@@ -317,8 +316,6 @@ def main():
         set_enabled(False)
     elif args.action == "status":
         check_status()
-    elif args.action == "restart":
-        restart_sidecar()
 
 
 if __name__ == "__main__":
