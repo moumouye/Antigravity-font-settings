@@ -36,6 +36,8 @@ async function loadPrefs() {
     mainFontSize: 15,
     codeFontSize: 13,
     lineHeight: 1.6,
+    customThoughtFontSize: false,
+    thoughtFontSize: 13,
     fontFamily: '',
     codeFontFamily: '',
     language: 'en'

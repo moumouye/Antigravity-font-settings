@@ -13,6 +13,8 @@
     mainFontSize: 15,
     codeFontSize: 13,
     lineHeight: 1.6,
+    customThoughtFontSize: false,
+    thoughtFontSize: 13,
     fontFamily: '',
     codeFontFamily: '',
     language: 'en'
@@ -22,13 +24,17 @@
     zh: {
       navTitle: '字体设置',
       headerTitle: '字体与排版设置',
-      headerSubtitle: '独立自定义左侧边栏与右侧主对话区的字体大小、行高及排版。',
+      headerSubtitle: '独立自定义左侧边栏、右侧主对话区、折叠思考及排版样式。',
       sidebarTitle: '左侧边栏字号',
       sidebarDesc: '控制项目目录树、历史会话列表及侧栏导航文本。',
       mainTitle: '对话正文字号',
-      mainDesc: '控制 AI 回复正文、用户消息气泡及底栏输入框文本。',
+      mainDesc: '控制 AI 回复正文、表格内容、用户消息气泡及底栏输入框。',
       lineHeightTitle: '正文行高比例',
-      lineHeightDesc: '调整对话文本的垂直行间距，提供更舒适的阅读排版。',
+      lineHeightDesc: '调整对话文本与表格内容的垂直行间距，提供更舒适的阅读排版。',
+      thoughtTitle: '折叠与思考字号',
+      thoughtDesc: '控制 AI 思考过程（Thought）、步骤折叠栏与工具执行输出文本。',
+      thoughtAutoTag: '等比自适应',
+      thoughtCustomTag: '独立自定义',
       codeTitle: '代码块字号',
       codeDesc: '控制等宽代码块与语法高亮区域字号。',
       customFontTitle: '自定义字体族',
@@ -44,13 +50,17 @@
     en: {
       navTitle: 'Font Settings',
       headerTitle: 'Font & Typography Settings',
-      headerSubtitle: 'Customize typography independently for the left sidebar and main conversation.',
+      headerSubtitle: 'Customize typography for sidebar, conversation, thoughts, and code blocks.',
       sidebarTitle: 'Sidebar Font Size',
       sidebarDesc: 'Controls project tree, conversation history, and sidebar navigation items.',
       mainTitle: 'Conversation Text Size',
-      mainDesc: 'Controls AI responses, user messages, and prompt input text.',
+      mainDesc: 'Controls AI responses, tables, user messages, and prompt input text.',
       lineHeightTitle: 'Line Height Ratio',
       lineHeightDesc: 'Vertical spacing between lines for comfortable reading.',
+      thoughtTitle: 'Thought & Folded Size',
+      thoughtDesc: 'Controls AI thinking blocks, collapsible steps, and tool execution outputs.',
+      thoughtAutoTag: 'Auto-scaled',
+      thoughtCustomTag: 'Custom Size',
       codeTitle: 'Code Block Font Size',
       codeDesc: 'Controls preformatted monospace code blocks and code fences.',
       customFontTitle: 'Custom Font Families',
@@ -95,6 +105,10 @@
     const mainSize = Math.max(9, Number(prefs.mainFontSize) || 15);
     const codeSize = Math.max(8, Number(prefs.codeFontSize) || 13);
     const lHeight = Math.max(1, Number(prefs.lineHeight) || 1.6);
+    const customThought = Boolean(prefs.customThoughtFontSize);
+    const thoughtSize = customThought
+      ? Math.max(8, Number(prefs.thoughtFontSize) || 13)
+      : Math.round(mainSize * 0.85);
     const uiFont = (prefs.fontFamily || '').trim();
     const codeFont = (prefs.codeFontFamily || '').trim();
 
@@ -103,6 +117,7 @@
         --agy-font-sidebar: ${sbSize}px;
         --agy-font-main: ${mainSize}px;
         --agy-font-code: ${codeSize}px;
+        --agy-font-thought: ${customThought ? `${thoughtSize}px` : `calc(var(--agy-font-main) * 0.85)`};
         --agy-font-line-height: ${lHeight};
         ${uiFont ? `--agy-font-family-ui: ${uiFont};` : ''}
         ${codeFont ? `--agy-font-family-code: ${codeFont};` : ''}
@@ -203,6 +218,101 @@
         ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
       }
 
+      /* Markdown Headings Typography: Hierarchical scaling based on mainFontSize */
+      .bg-border.w-\\[1px\\] ~ div h1,
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h1,
+      [data-testid="conversation-view"] h1 {
+        font-size: calc(var(--agy-font-main) * 1.45) !important;
+        line-height: 1.3 !important;
+        font-weight: 700 !important;
+        ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
+      }
+      .bg-border.w-\\[1px\\] ~ div h2:not(.bg-sidebar *):not([role="dialog"] *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h2:not(.bg-sidebar *):not([role="dialog"] *),
+      [data-testid="conversation-view"] h2:not(.bg-sidebar *):not([role="dialog"] *) {
+        font-size: calc(var(--agy-font-main) * 1.30) !important;
+        line-height: 1.35 !important;
+        font-weight: 650 !important;
+        ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
+      }
+      .bg-border.w-\\[1px\\] ~ div h3,
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h3,
+      [data-testid="conversation-view"] h3 {
+        font-size: calc(var(--agy-font-main) * 1.15) !important;
+        line-height: 1.4 !important;
+        font-weight: 600 !important;
+        ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
+      }
+      .bg-border.w-\\[1px\\] ~ div h4,
+      .bg-border.w-\\[1px\\] ~ div h5,
+      .bg-border.w-\\[1px\\] ~ div h6,
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h4,
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h5,
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h6,
+      [data-testid="conversation-view"] h4,
+      [data-testid="conversation-view"] h5,
+      [data-testid="conversation-view"] h6 {
+        font-size: calc(var(--agy-font-main) * 1.05) !important;
+        line-height: 1.45 !important;
+        font-weight: 600 !important;
+        ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
+      }
+
+      /* Markdown Tables Typography: Strict 1:1 synchronization with mainFontSize */
+      .bg-border.w-\\[1px\\] ~ div table,
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) table,
+      [data-testid="conversation-view"] table {
+        font-size: var(--agy-font-main) !important;
+        line-height: var(--agy-font-line-height) !important;
+        ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
+      }
+      .bg-border.w-\\[1px\\] ~ div table th,
+      .bg-border.w-\\[1px\\] ~ div table td,
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) table th,
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) table td,
+      [data-testid="conversation-view"] table th,
+      [data-testid="conversation-view"] table td {
+        font-size: var(--agy-font-main) !important;
+        line-height: var(--agy-font-line-height) !important;
+        ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
+      }
+      .bg-border.w-\\[1px\\] ~ div table th,
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) table th,
+      [data-testid="conversation-view"] table th {
+        font-weight: 600 !important;
+      }
+
+      /* Thought & Collapsible Sections Typography */
+      [data-testid="thinking-collapsible-trigger"],
+      [data-testid="thinking-collapsible-trigger"] *,
+      div:has(> [data-testid="thinking-collapsible-trigger"]),
+      div:has(> [data-testid="thinking-collapsible-trigger"]) *,
+      [data-testid="tool-group-collapsible"],
+      [data-testid="tool-group-collapsible"] *,
+      [data-testid="worked-for-collapsible"],
+      [data-testid="worked-for-collapsible"] *,
+      div:has(> [data-testid="tool-group-collapsible"]),
+      div:has(> [data-testid="tool-group-collapsible"]) *,
+      div:has(> [data-testid="worked-for-collapsible"]),
+      div:has(> [data-testid="worked-for-collapsible"]) *,
+      [data-testid*="-step"]:not([data-testid="user-input-step"]),
+      [data-testid*="-step"]:not([data-testid="user-input-step"]) *,
+      [role="group"][aria-labelledby*=":r"],
+      [role="group"][aria-labelledby*=":r"] * {
+        font-size: var(--agy-font-thought) !important;
+        line-height: 1.5 !important;
+        ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
+      }
+      div:has(> [data-testid="thinking-collapsible-trigger"]) pre,
+      div:has(> [data-testid="thinking-collapsible-trigger"]) code,
+      [data-testid*="-step"]:not([data-testid="user-input-step"]) pre,
+      [data-testid*="-step"]:not([data-testid="user-input-step"]) code,
+      [role="group"][aria-labelledby*=":r"] pre,
+      [role="group"][aria-labelledby*=":r"] code {
+        font-size: var(--agy-font-thought) !important;
+        ${codeFont ? 'font-family: var(--agy-font-family-code) !important;' : ''}
+      }
+
       .bg-border.w-\\[1px\\] ~ div textarea,
       .bg-border.w-\\[1px\\] ~ div [contenteditable="true"],
       .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) textarea,
@@ -211,8 +321,10 @@
         ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
       }
 
-      /* Code Block Typography */
-      pre, code, [class*="code-block"], .monaco-editor, pre code {
+      /* Code Block Typography (Regular conversation pre & code outside thought/steps) */
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) pre:not([data-testid*="-step"] pre):not(div:has(> [data-testid="thinking-collapsible-trigger"]) pre),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) code:not([data-testid*="-step"] code):not(div:has(> [data-testid="thinking-collapsible-trigger"]) code),
+      [class*="code-block"], .monaco-editor {
         font-size: var(--agy-font-code) !important;
         ${codeFont ? 'font-family: var(--agy-font-family-code) !important;' : ''}
       }
@@ -457,7 +569,37 @@
             </div>
           </div>
 
-          <!-- 4. Code Block Font Size -->
+          <!-- 4. Thought & Collapsible Font Size (Switch + Expandable Slider) -->
+          <div class="bg-secondary/20 border border-border/50 rounded-xl p-4 flex flex-col gap-3">
+            <div class="flex items-center justify-between gap-4">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-semibold text-foreground">${curTexts.thoughtTitle}</span>
+                  <span id="agy-thought-tag" class="text-[10px] px-1.5 py-0.5 rounded-full ${currentPrefs.customThoughtFontSize ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-secondary/60 text-secondary-foreground border border-border/60'}">${currentPrefs.customThoughtFontSize ? curTexts.thoughtCustomTag : curTexts.thoughtAutoTag}</span>
+                </div>
+                <div class="text-[11px] text-secondary-foreground mt-0.5 leading-normal">${curTexts.thoughtDesc}</div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <button type="button" id="agy-switch-thought" role="switch" aria-checked="${currentPrefs.customThoughtFontSize ? 'true' : 'false'}" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${currentPrefs.customThoughtFontSize ? 'bg-primary' : 'bg-secondary'}">
+                  <span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-background shadow-md ring-0 transition duration-200 ease-in-out ${currentPrefs.customThoughtFontSize ? 'translate-x-4' : 'translate-x-0'}"></span>
+                </button>
+              </div>
+            </div>
+            <div id="agy-thought-slider-group" class="pt-1 flex flex-col gap-3 ${currentPrefs.customThoughtFontSize ? '' : 'hidden'}">
+              <div class="flex items-center justify-between gap-4">
+                <span class="text-[11px] text-secondary-foreground">${curTexts.thoughtTitle}</span>
+                <div class="flex items-center bg-background border border-border/80 rounded-md px-2 py-0.5 text-xs text-foreground shrink-0 shadow-sm">
+                  <input type="number" id="agy-input-thought" min="8" max="30" value="${currentPrefs.thoughtFontSize || 13}" class="w-8 text-right bg-transparent outline-none font-mono text-xs pr-1 text-foreground" />
+                  <span class="text-[11px] text-secondary-foreground select-none">${curTexts.unitPx}</span>
+                </div>
+              </div>
+              <div>
+                <input type="range" id="agy-range-thought" min="9" max="24" step="1" value="${currentPrefs.thoughtFontSize || 13}" class="agy-slider" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Code Block Font Size -->
           <div class="bg-secondary/20 border border-border/50 rounded-xl p-4 flex flex-col gap-3">
             <div class="flex items-center justify-between gap-4">
               <div class="min-w-0 flex-1">
@@ -474,7 +616,7 @@
             </div>
           </div>
 
-          <!-- 5. Custom Font Families -->
+          <!-- 6. Custom Font Families -->
           <div class="bg-secondary/20 border border-border/50 rounded-xl p-4 flex flex-col gap-3">
             <div>
               <div class="text-xs font-semibold text-foreground">${curTexts.customFontTitle}</div>
@@ -519,6 +661,9 @@
       const inputMain = container.querySelector('#agy-input-main');
       const rangeLineHeight = container.querySelector('#agy-range-line-height');
       const inputLineHeight = container.querySelector('#agy-input-line-height');
+      const switchThought = container.querySelector('#agy-switch-thought');
+      const rangeThought = container.querySelector('#agy-range-thought');
+      const inputThought = container.querySelector('#agy-input-thought');
       const rangeCode = container.querySelector('#agy-range-code');
       const inputCode = container.querySelector('#agy-input-code');
       const inputFontFamily = container.querySelector('#agy-input-font-family');
@@ -550,6 +695,26 @@
       }
       rangeLineHeight.addEventListener('input', e => syncLineHeight(e.target.value));
       inputLineHeight.addEventListener('input', e => syncLineHeight(e.target.value));
+
+      function syncThought(val) {
+        if (rangeThought) rangeThought.value = val;
+        if (inputThought) inputThought.value = val;
+        savePrefs({ thoughtFontSize: Number(val) });
+      }
+      if (rangeThought) rangeThought.addEventListener('input', e => syncThought(e.target.value));
+      if (inputThought) inputThought.addEventListener('input', e => syncThought(e.target.value));
+
+      if (switchThought) {
+        switchThought.addEventListener('click', (e) => {
+          e.preventDefault();
+          const nextState = !currentPrefs.customThoughtFontSize;
+          savePrefs({
+            customThoughtFontSize: nextState,
+            thoughtFontSize: currentPrefs.thoughtFontSize || 13
+          });
+          reRender();
+        });
+      }
 
       function syncCode(val) {
         rangeCode.value = val;

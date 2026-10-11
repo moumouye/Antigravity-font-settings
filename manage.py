@@ -234,7 +234,10 @@ def check_status():
             side_sz = prefs.get("sidebarFontSize", 14)
             code_sz = prefs.get("codeFontSize", 13)
             lh = prefs.get("lineHeight", 1.6)
-            prefs_summary = f"正文 {main_sz}px | 侧栏 {side_sz}px | 代码 {code_sz}px | 行高 {lh}"
+            custom_thought = prefs.get("customThoughtFontSize", False)
+            thought_sz = prefs.get("thoughtFontSize", 13)
+            thought_desc = f"{thought_sz}px (独立)" if custom_thought else "等比自适应 (85%)"
+            prefs_summary = f"正文 {main_sz}px | 侧栏 {side_sz}px | 折叠/思考 {thought_desc} | 代码 {code_sz}px | 行高 {lh}"
         except Exception:
             prefs_summary = "已保存 (读取异常)"
 
