@@ -16,13 +16,19 @@ flowchart TB
     end
 
     subgraph Sidecar ["⚙️ 引擎服务层 (Sidecar Engine)"]
-        Main["main.mjs 守护进程"]
+        Main["main.mjs 守护进程<br/>(无依赖动态装配器)"]
         CDP["CDP Client (WebSocket)"]
-        Watcher["代码变动轮询感知器 (3s Tick)"]
+        Watcher["源码变动轮询感知器 (3s Tick)"]
+    end
+
+    subgraph Client ["🎨 渲染注入层源码 (sidecars/engine/client/)"]
+        Types["types.d.ts (TS 类型约束)"]
+        Styles["styles.css (纯样式表)"]
+        I18n["i18n.js (双语字典)"]
+        Panel["panel.js (DOM 与交互)"]
     end
 
     subgraph Injected ["🎨 渲染注入层 (Page Context)"]
-        Inject["inject.js 注入脚本"]
         Observer["DOM 变动监听器 (MutationObserver)"]
         SettingsTab["Font Settings 设置面板"]
         StyleTag["动态样式表 & CSS 变量"]
@@ -37,8 +43,9 @@ flowchart TB
     Main -->|建立 WebSocket 会话| CDP
     CDP <==>|双向通信通道| Renderer
 
-    Watcher -->|监听本地文件变动| Inject
-    CDP -->|运行时动态评估注入| Inject
+    Watcher -->|监听模块文件变动| Client
+    Client -->|内存动态装配| Main
+    Main -->|运行时 CDP 动态评估注入| CDP
 
     Renderer --> Observer
     Observer --> SettingsTab
@@ -84,22 +91,23 @@ sequenceDiagram
 
 ## 3. 免重启热重载机制 (Hot-Reloading Sequence)
 
-当开发者修改了 `inject.js` 中的样式或逻辑，或用户通过版本管理拉取了最新代码时，系统通过 CDP 自动执行热重载，无需关闭或重启 Antigravity 宿主：
+当开发者修改了 `client/` 下的样式（`styles.css`）、文案（`i18n.js`）或交互逻辑（`panel.js`），或用户通过版本管理拉取了最新代码时，系统通过 CDP 自动执行热重载，无需关闭或重启 Antigravity 宿主：
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Dev as 👨‍💻 代码更新 / Git Pull
-    participant File as 📄 本地 inject.js
-    participant Engine as ⚙️ main.mjs (轮询器)
+    participant File as 📄 client/ 源码模块
+    participant Engine as ⚙️ main.mjs (装配轮询器)
     participant CDP as 🔌 CDP 通道 (WebSocket)
     participant Page as 🖥️ 运行中的 Antigravity 窗口
 
-    Dev->>File: 写入新排版逻辑 / 更新文件
+    Dev->>File: 写入新排版逻辑 / 更新样式或文案
     loop 每 3 秒定期检测
-        Engine->>File: 读取文件内容并比对内容哈希 (tick)
+        Engine->>File: 读取模块内容并计算装配哈希 (tick)
     end
-    File-->>Engine: 感知到代码内容发生变更
+    File-->>Engine: 感知到源码模块内容发生变更
+    Engine->>Engine: 内存中动态装配合成新版脚本闭包
     Engine->>CDP: Runtime.evaluate (注入最新脚本源码)
     CDP->>Page: 页面上下文执行新版脚本
     Page-->>Page: 自动卸载旧 DOM 结构，重绘新版「Font Settings」面板

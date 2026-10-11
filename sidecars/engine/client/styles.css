@@ -1,0 +1,360 @@
+/* ==========================================================================
+   Antigravity Font Settings - Client Stylesheet
+   ========================================================================== */
+
+/* 1. Slim, elegant slider controls adapting cleanly to both light & dark themes */
+.agy-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--border, rgba(128, 128, 128, 0.25));
+  outline: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+  transition: background-color 0.15s ease;
+}
+.agy-slider:hover {
+  background: var(--muted-foreground, rgba(128, 128, 128, 0.45));
+}
+.agy-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #0ea5e9;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.12s ease;
+  border: 2px solid var(--background, #fff);
+}
+.agy-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.18);
+  background: #0284c7;
+}
+.agy-slider::-webkit-slider-thumb:active {
+  transform: scale(1.05);
+}
+
+/* 2. Hide native number input spin arrows to eliminate number squeezing */
+#agy-font-settings-panel input[type="number"]::-webkit-inner-spin-button,
+#agy-font-settings-panel input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+  display: none !important;
+}
+#agy-font-settings-panel input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
+/* 3. Left Sidebar Typography (Main app window only, strictly exclude settings modal) */
+body > #root .bg-sidebar:not([role="dialog"] *):not(.settings-modal-container *) {
+  font-size: var(--agy-font-sidebar) !important;
+}
+body > #root .bg-sidebar:not([role="dialog"] *):not(.settings-modal-container *) .text-xs {
+  font-size: calc(var(--agy-font-sidebar) * 0.85) !important;
+}
+body > #root .bg-sidebar:not([role="dialog"] *):not(.settings-modal-container *) .text-sm {
+  font-size: var(--agy-font-sidebar) !important;
+}
+body > #root .bg-sidebar:not([role="dialog"] *):not(.settings-modal-container *) .text-base {
+  font-size: calc(var(--agy-font-sidebar) * 1.15) !important;
+}
+html.agy-has-ui-font body > #root .bg-sidebar:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font body > #root .bg-sidebar:not([role="dialog"] *):not(.settings-modal-container *) button,
+html.agy-has-ui-font body > #root .bg-sidebar:not([role="dialog"] *):not(.settings-modal-container *) span,
+html.agy-has-ui-font body > #root .bg-sidebar:not([role="dialog"] *):not(.settings-modal-container *) div {
+  font-family: var(--agy-font-family-ui) !important;
+}
+
+/* 4. Settings Modal Left Sidebar: Strictly lock to native sizes */
+[role="dialog"] .bg-sidebar,
+.settings-modal-container .bg-sidebar,
+[role="dialog"] .bg-sidebar button,
+.settings-modal-container .bg-sidebar button,
+[role="dialog"] .bg-sidebar span,
+.settings-modal-container .bg-sidebar span {
+  font-size: 0.875rem !important; /* native text-sm = 14px */
+}
+[role="dialog"] .bg-sidebar .text-xs,
+.settings-modal-container .bg-sidebar .text-xs {
+  font-size: 0.75rem !important; /* native text-xs = 12px */
+}
+[role="dialog"] .bg-sidebar .text-sm,
+.settings-modal-container .bg-sidebar .text-sm {
+  font-size: 0.875rem !important; /* native text-sm = 14px */
+}
+
+/* 5. Right Main Area Typography (Synchronized AI response, User message bubble, and Input) */
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div,
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) {
+  font-family: var(--agy-font-family-ui);
+}
+
+[class*="user-input-step"] .whitespace-pre-wrap,
+[class*="user-input-step"] [class*="whitespace-pre-wrap"],
+[class*="user-input-step"] .text-sm,
+[class*="user-input-step"] p,
+.bg-card .whitespace-pre-wrap,
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="user-input-step"] .whitespace-pre-wrap,
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) p,
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) li,
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="prose"],
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="prose"] p,
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="prose"] li,
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="prose"] span:not([class*="lucide"]):not(svg *) {
+  font-size: var(--agy-font-main) !important;
+  line-height: var(--agy-font-line-height) !important;
+}
+html.agy-has-ui-font [class*="user-input-step"] .whitespace-pre-wrap,
+html.agy-has-ui-font [class*="user-input-step"] [class*="whitespace-pre-wrap"],
+html.agy-has-ui-font [class*="user-input-step"] .text-sm,
+html.agy-has-ui-font [class*="user-input-step"] p,
+html.agy-has-ui-font .bg-card .whitespace-pre-wrap,
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="user-input-step"] .whitespace-pre-wrap,
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) p,
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) li,
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="prose"],
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="prose"] p,
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="prose"] li,
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [class*="prose"] span:not([class*="lucide"]):not(svg *) {
+  font-family: var(--agy-font-family-ui) !important;
+}
+
+/* 6. Markdown Headings Typography: Hierarchical scaling based on mainFontSize (strictly exclude dialogs) */
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h1:not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h1:not([role="dialog"] *):not(.settings-modal-container *),
+[data-testid="conversation-view"] h1 {
+  font-size: calc(var(--agy-font-main) * 1.45) !important;
+  line-height: 1.3 !important;
+  font-weight: 700 !important;
+}
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h2:not(.bg-sidebar *):not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h2:not(.bg-sidebar *):not([role="dialog"] *):not(.settings-modal-container *),
+[data-testid="conversation-view"] h2:not(.bg-sidebar *):not([role="dialog"] *):not(.settings-modal-container *) {
+  font-size: calc(var(--agy-font-main) * 1.30) !important;
+  line-height: 1.35 !important;
+  font-weight: 650 !important;
+}
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h3:not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h3:not([role="dialog"] *):not(.settings-modal-container *),
+[data-testid="conversation-view"] h3:not([role="dialog"] *):not(.settings-modal-container *) {
+  font-size: calc(var(--agy-font-main) * 1.15) !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+}
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h4:not([role="dialog"] *):not(.settings-modal-container *),
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h5:not([role="dialog"] *):not(.settings-modal-container *),
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h6:not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h4:not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h5:not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h6:not([role="dialog"] *):not(.settings-modal-container *),
+[data-testid="conversation-view"] h4:not([role="dialog"] *):not(.settings-modal-container *),
+[data-testid="conversation-view"] h5:not([role="dialog"] *):not(.settings-modal-container *),
+[data-testid="conversation-view"] h6:not([role="dialog"] *):not(.settings-modal-container *) {
+  font-size: calc(var(--agy-font-main) * 1.05) !important;
+  line-height: 1.45 !important;
+  font-weight: 600 !important;
+}
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h1:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h1:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font [data-testid="conversation-view"] h1,
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h2:not(.bg-sidebar *):not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h2:not(.bg-sidebar *):not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font [data-testid="conversation-view"] h2:not(.bg-sidebar *):not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h3:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h3:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font [data-testid="conversation-view"] h3:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h4:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h5:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) h6:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h4:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h5:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) h6:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font [data-testid="conversation-view"] h4:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font [data-testid="conversation-view"] h5:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font [data-testid="conversation-view"] h6:not([role="dialog"] *):not(.settings-modal-container *) {
+  font-family: var(--agy-font-family-ui) !important;
+}
+
+/* 7. Markdown Tables Typography: Strict 1:1 synchronization with mainFontSize (strictly exclude dialogs) */
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) table:not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) table:not([role="dialog"] *):not(.settings-modal-container *),
+[data-testid="conversation-view"] table {
+  font-size: var(--agy-font-main) !important;
+  line-height: var(--agy-font-line-height) !important;
+}
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) table td:not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) table td:not([role="dialog"] *):not(.settings-modal-container *),
+[data-testid="conversation-view"] table th,
+[data-testid="conversation-view"] table td {
+  font-size: var(--agy-font-main) !important;
+  line-height: var(--agy-font-line-height) !important;
+}
+.bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
+[data-testid="conversation-view"] table th {
+  font-weight: 600 !important;
+}
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) table:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) table:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font [data-testid="conversation-view"] table,
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div:not([role="dialog"]):not(.settings-modal-container) table td:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]):not([role="dialog"]):not(.settings-modal-container) table td:not([role="dialog"] *):not(.settings-modal-container *),
+html.agy-has-ui-font [data-testid="conversation-view"] table th,
+html.agy-has-ui-font [data-testid="conversation-view"] table td {
+  font-family: var(--agy-font-family-ui) !important;
+}
+
+/* 8. Thought & Collapsible Sections Typography */
+[data-testid="thinking-collapsible-trigger"],
+[data-testid="thinking-collapsible-trigger"] *,
+div:has(> [data-testid="thinking-collapsible-trigger"]),
+div:has(> [data-testid="thinking-collapsible-trigger"]) *,
+[data-testid="tool-group-collapsible"],
+[data-testid="tool-group-collapsible"] *,
+[data-testid="worked-for-collapsible"],
+[data-testid="worked-for-collapsible"] *,
+div:has(> [data-testid="tool-group-collapsible"]),
+div:has(> [data-testid="tool-group-collapsible"]) *,
+div:has(> [data-testid="worked-for-collapsible"]),
+div:has(> [data-testid="worked-for-collapsible"]) *,
+[data-testid*="-step"]:not([data-testid="user-input-step"]),
+[data-testid*="-step"]:not([data-testid="user-input-step"]) *,
+[role="group"][aria-labelledby*=":r"],
+[role="group"][aria-labelledby*=":r"] * {
+  font-size: var(--agy-font-thought) !important;
+  line-height: 1.5 !important;
+}
+html.agy-has-ui-font [data-testid="thinking-collapsible-trigger"],
+html.agy-has-ui-font [data-testid="thinking-collapsible-trigger"] *,
+html.agy-has-ui-font div:has(> [data-testid="thinking-collapsible-trigger"]),
+html.agy-has-ui-font div:has(> [data-testid="thinking-collapsible-trigger"]) *,
+html.agy-has-ui-font [data-testid="tool-group-collapsible"],
+html.agy-has-ui-font [data-testid="tool-group-collapsible"] *,
+html.agy-has-ui-font [data-testid="worked-for-collapsible"],
+html.agy-has-ui-font [data-testid="worked-for-collapsible"] *,
+html.agy-has-ui-font div:has(> [data-testid="tool-group-collapsible"]),
+html.agy-has-ui-font div:has(> [data-testid="tool-group-collapsible"]) *,
+html.agy-has-ui-font div:has(> [data-testid="worked-for-collapsible"]),
+html.agy-has-ui-font div:has(> [data-testid="worked-for-collapsible"]) *,
+html.agy-has-ui-font [data-testid*="-step"]:not([data-testid="user-input-step"]),
+html.agy-has-ui-font [data-testid*="-step"]:not([data-testid="user-input-step"]) *,
+html.agy-has-ui-font [role="group"][aria-labelledby*=":r"],
+html.agy-has-ui-font [role="group"][aria-labelledby*=":r"] * {
+  font-family: var(--agy-font-family-ui);
+}
+div:has(> [data-testid="thinking-collapsible-trigger"]) pre,
+div:has(> [data-testid="thinking-collapsible-trigger"]) code,
+[data-testid*="-step"]:not([data-testid="user-input-step"]) pre,
+[data-testid*="-step"]:not([data-testid="user-input-step"]) code,
+[role="group"][aria-labelledby*=":r"] pre,
+[role="group"][aria-labelledby*=":r"] code {
+  font-size: var(--agy-font-thought) !important;
+}
+html.agy-has-code-font div:has(> [data-testid="thinking-collapsible-trigger"]) pre,
+html.agy-has-code-font div:has(> [data-testid="thinking-collapsible-trigger"]) code,
+html.agy-has-code-font [data-testid*="-step"]:not([data-testid="user-input-step"]) pre,
+html.agy-has-code-font [data-testid*="-step"]:not([data-testid="user-input-step"]) code,
+html.agy-has-code-font [role="group"][aria-labelledby*=":r"] pre,
+html.agy-has-code-font [role="group"][aria-labelledby*=":r"] code {
+  font-family: var(--agy-font-family-code) !important;
+}
+
+/* 9. Textarea & ContentEditable Input Typography */
+.bg-border.w-\[1px\] ~ div textarea,
+.bg-border.w-\[1px\] ~ div [contenteditable="true"],
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) textarea,
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [contenteditable="true"] {
+  font-size: var(--agy-font-main) !important;
+}
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div textarea,
+html.agy-has-ui-font .bg-border.w-\[1px\] ~ div [contenteditable="true"],
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) textarea,
+html.agy-has-ui-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) [contenteditable="true"] {
+  font-family: var(--agy-font-family-ui);
+}
+
+/* 10. Code Block Typography (Regular conversation pre & code outside thought/steps) */
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) pre:not([data-testid*="-step"] pre):not(div:has(> [data-testid="thinking-collapsible-trigger"]) pre),
+.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) code:not([data-testid*="-step"] code):not(div:has(> [data-testid="thinking-collapsible-trigger"]) code),
+[class*="code-block"], .monaco-editor {
+  font-size: var(--agy-font-code) !important;
+}
+html.agy-has-code-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) pre:not([data-testid*="-step"] pre):not(div:has(> [data-testid="thinking-collapsible-trigger"]) pre),
+html.agy-has-code-font .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\[1px\]) code:not([data-testid*="-step"] code):not(div:has(> [data-testid="thinking-collapsible-trigger"]) code),
+html.agy-has-code-font [class*="code-block"],
+html.agy-has-code-font .monaco-editor {
+  font-family: var(--agy-font-family-code) !important;
+}
+
+/* 11. Settings Modal Font Tab Display */
+#agy-font-settings-panel {
+  display: none;
+}
+
+/* 12. Slider Transparent Peeking Mode (Real-time live view through modal dialog) */
+body.agy-peeking .settings-modal-backdrop {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  transition: background-color 0.15s ease;
+}
+
+body.agy-peeking .settings-modal-container,
+body.agy-peeking .settings-modal-container .bg-background,
+body.agy-peeking .settings-modal-container .bg-sidebar,
+body.agy-peeking .settings-modal-container > div,
+body.agy-peeking #agy-font-settings-panel,
+body.agy-peeking #agy-font-settings-panel div {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+body.agy-peeking .settings-modal-container > button,
+body.agy-peeking .settings-modal-container .bg-sidebar,
+body.agy-peeking #agy-font-settings-panel .agy-peek-hide,
+body.agy-peeking #agy-font-settings-panel .agy-setting-row:not(.agy-active-peeking-row),
+body.agy-peeking #agy-font-settings-panel .agy-row-label,
+body.agy-peeking #agy-font-settings-panel button,
+body.agy-peeking #agy-font-settings-panel input[type="text"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.15s ease;
+}
+
+body.agy-peeking #agy-font-settings-panel .agy-active-peeking-row {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+body.agy-peeking #agy-font-settings-panel .agy-active-peeking-row .agy-slider-control-group,
+body.agy-peeking #agy-font-settings-panel .agy-active-peeking-row .agy-slider-control-group * {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+body.agy-peeking #agy-font-settings-panel .agy-active-peeking-row .agy-slider {
+  background: rgba(100, 116, 139, 0.45) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+body.agy-peeking #agy-font-settings-panel .agy-active-peeking-row .agy-slider::-webkit-slider-thumb {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+  transform: scale(1.18);
+}
+
+body.agy-peeking #agy-font-settings-panel .agy-active-peeking-row .agy-number-capsule {
+  background-color: var(--background, #fff) !important;
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.25)) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22) !important;
+}
+

@@ -22,7 +22,7 @@ function getProfileDir() {
 const PROFILE_DIR = getProfileDir();
 const DATA_DIR = process.env.ANTIGRAVITY_EXECUTABLE_DATA_DIR || join(__dirname, 'data');
 const PREFS_FILE = join(DATA_DIR, 'preferences.json');
-const INJECT_FILE = join(__dirname, 'inject.js');
+const CLIENT_DIR = join(__dirname, 'client');
 
 async function loadPrefs() {
   try {
@@ -169,6 +169,39 @@ async function attachToPage(target, injectScript, savedPrefs) {
   return client;
 }
 
+async function buildInjectScript() {
+  const stylesPath = join(CLIENT_DIR, 'styles.css');
+  const i18nPath = join(CLIENT_DIR, 'i18n.js');
+  const panelPath = join(CLIENT_DIR, 'panel.js');
+
+  if (existsSync(stylesPath) && existsSync(i18nPath) && existsSync(panelPath)) {
+    const styles = await readFile(stylesPath, 'utf8');
+    const i18n = await readFile(i18nPath, 'utf8');
+    const panel = await readFile(panelPath, 'utf8');
+
+    const cleanI18n = i18n.replace(/^export\s+/gm, '');
+    const cleanPanel = panel.replace(/^export\s+/gm, '');
+
+    return `(() => {
+  // 1. Client Stylesheet
+  const CLIENT_STYLES = ${JSON.stringify(styles)};
+
+  // 2. Client I18N Module
+  ${cleanI18n}
+
+  // 3. Client Panel & Controller
+  ${cleanPanel}
+
+  // 4. Client Entry Execution
+  if (typeof initClient === 'function') {
+    initClient(CLIENT_STYLES, DEFAULT_PREFS, getTexts);
+  }
+})();\n`;
+  }
+
+  return '';
+}
+
 let lastScriptContent = '';
 
 async function tick() {
@@ -189,7 +222,9 @@ async function tick() {
 
     if (pages.length === 0) return;
 
-    const injectScript = await readFile(INJECT_FILE, 'utf8');
+    const injectScript = await buildInjectScript();
+    if (!injectScript) return;
+
     const savedPrefs = await loadPrefs();
     const scriptChanged = (injectScript !== lastScriptContent);
     if (scriptChanged) {

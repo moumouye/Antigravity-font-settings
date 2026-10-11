@@ -58,6 +58,7 @@ python3 manage.py install
 | 安装启用 | `python3 manage.py install` | 建立软链接并在配置中启用 |
 | 启用插件 | `python3 manage.py enable` | 激活插件并自动继承已保存的历史字体配置 |
 | 禁用插件 | `python3 manage.py disable` | 暂时停用插件并释放进程，完整保留字体配置 |
+| 自动化测试 | `python3 manage.py test` | 运行端到端自动化测试链路，验证装配、CDP 连通性、CSS 规则与计算样式 |
 | 彻底卸载 | `python3 manage.py uninstall` | 纯净卸载：清理软链接、配置条目、运行数据及系统残留空文件夹（零残留） |
 
 ---
@@ -74,7 +75,11 @@ Antigravity-font-settings/
 ├── sidecars/
 │   └── engine/
 │       ├── sidecar.json     # 后台服务清单
-│       ├── main.mjs         # CDP 自动化发现与注入服务
-│       └── inject.js        # 前端动态样式与设置弹窗组件
+│       ├── main.mjs         # CDP 自动化发现、模块动态装配与热重载服务
+│       └── client/          # 前端注入层模块化源码目录
+│           ├── types.d.ts   # TypeScript 接口定义（偏好模型、多语言与 RPC 接口）
+│           ├── styles.css   # 原生 CSS 排版样式表（变量、滑块、层级与作用域）
+│           ├── i18n.js      # 中英文双语字典与助手函数 (带 // @ts-check)
+│           └── panel.js     # 设置面板 DOM 挂载、双向数据绑定与 Observer
 └── README.md
 ```

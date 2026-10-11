@@ -269,22 +269,34 @@ def check_status():
     print("========================================================")
 
 
+def run_tests():
+    """Run End-to-End automated testing suite via test_e2e.mjs."""
+    test_script = SOURCE_DIR / "sidecars" / "engine" / "test_e2e.mjs"
+    if not test_script.exists():
+        print(f"[ERROR] 未找到测试脚本: {test_script}")
+        return False
+    print("\n--- 正在启动端到端自动化测试链路 ---")
+    res = subprocess.run(["node", str(test_script)])
+    return res.returncode == 0
+
+
 def interactive_menu():
     """Display streamlined interactive numeric menu in terminal."""
     while True:
         print("\n========================================================")
-        print("         Antigravity 字体设置插件管理器 (v1.0.0)         ")
+        print("         Antigravity 字体设置插件管理器 (v1.1.0)         ")
         print("========================================================")
         print("  [1] 安装并启用插件 (Install)")
         print("  [2] 彻底卸载插件 (Uninstall - 清理所有配置与数据)")
         print("  [3] 查看当前状态 (Status - 含已存字号与运行状态)")
         print("  [4] 启用插件 (Enable - 激活并恢复历史字体设置)")
         print("  [5] 禁用插件 (Disable - 暂时停用，保留字体设置)")
+        print("  [6] 运行自动化全链路测试 (Test)")
         print("  [0] 退出管理器 (Exit)")
         print("========================================================")
 
         try:
-            choice = input("请输入选项序号 [0-5]: ").strip()
+            choice = input("请输入选项序号 [0-6]: ").strip()
         except (KeyboardInterrupt, EOFError):
             print("\n\n已退出管理器。")
             break
@@ -299,11 +311,13 @@ def interactive_menu():
             set_enabled(True)
         elif choice == "5":
             set_enabled(False)
+        elif choice == "6":
+            run_tests()
         elif choice == "0":
             print("\n已退出管理器。")
             break
         else:
-            print(f"\n[!] 无效选项: '{choice}'，请输入 0 到 5 之间的数字。")
+            print(f"\n[!] 无效选项: '{choice}'，请输入 0 到 6 之间的数字。")
 
         try:
             input("\n按回车键继续...")
@@ -321,7 +335,7 @@ def main():
         "action",
         nargs="?",
         default=None,
-        choices=["install", "uninstall", "enable", "disable", "status"],
+        choices=["install", "uninstall", "enable", "disable", "status", "test"],
         help="Action to execute (leave empty for interactive menu)",
     )
     args = parser.parse_args()
@@ -338,6 +352,8 @@ def main():
         set_enabled(False)
     elif args.action == "status":
         check_status()
+    elif args.action == "test":
+        run_tests()
 
 
 if __name__ == "__main__":
