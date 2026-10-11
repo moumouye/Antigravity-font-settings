@@ -22,8 +22,8 @@
 
   const I18N = {
     zh: {
-      navTitle: '字体设置',
-      headerTitle: '字体与排版设置',
+      navTitle: 'Font Settings',
+      headerTitle: 'Font Settings',
       headerSubtitle: '针对对话正文、折叠思考、工作区侧栏及代码块，细粒度定制字号与排版比例。',
       sectionConversation: '对话与正文排版',
       mainTitle: '对话正文字号',
@@ -47,13 +47,13 @@
       codeFontDesc: '留空使用系统默认等宽',
       resetBtn: '恢复默认设置',
       langLabel: '界面语言',
-      langEnBtn: '英文',
+      langEnBtn: 'English',
       langZhBtn: '简体中文',
       unitPx: 'px'
     },
     en: {
       navTitle: 'Font Settings',
-      headerTitle: 'Font & Typography Settings',
+      headerTitle: 'Font Settings',
       headerSubtitle: 'Customize typography and font sizes for conversation, thoughts, sidebar, and code blocks.',
       sectionConversation: 'Conversation & Typography',
       mainTitle: 'Conversation Text Size',
@@ -241,66 +241,66 @@
         ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
       }
 
-      /* Markdown Headings Typography: Hierarchical scaling based on mainFontSize */
-      .bg-border.w-\\[1px\\] ~ div h1,
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h1,
+      /* Markdown Headings Typography: Hierarchical scaling based on mainFontSize (strictly exclude dialogs) */
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) h1:not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) h1:not([role="dialog"] *):not(.settings-modal-container *),
       [data-testid="conversation-view"] h1 {
         font-size: calc(var(--agy-font-main) * 1.45) !important;
         line-height: 1.3 !important;
         font-weight: 700 !important;
         ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
       }
-      .bg-border.w-\\[1px\\] ~ div h2:not(.bg-sidebar *):not([role="dialog"] *),
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h2:not(.bg-sidebar *):not([role="dialog"] *),
-      [data-testid="conversation-view"] h2:not(.bg-sidebar *):not([role="dialog"] *) {
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) h2:not(.bg-sidebar *):not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) h2:not(.bg-sidebar *):not([role="dialog"] *):not(.settings-modal-container *),
+      [data-testid="conversation-view"] h2:not(.bg-sidebar *):not([role="dialog"] *):not(.settings-modal-container *) {
         font-size: calc(var(--agy-font-main) * 1.30) !important;
         line-height: 1.35 !important;
         font-weight: 650 !important;
         ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
       }
-      .bg-border.w-\\[1px\\] ~ div h3,
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h3,
-      [data-testid="conversation-view"] h3 {
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) h3:not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) h3:not([role="dialog"] *):not(.settings-modal-container *),
+      [data-testid="conversation-view"] h3:not([role="dialog"] *):not(.settings-modal-container *) {
         font-size: calc(var(--agy-font-main) * 1.15) !important;
         line-height: 1.4 !important;
         font-weight: 600 !important;
         ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
       }
-      .bg-border.w-\\[1px\\] ~ div h4,
-      .bg-border.w-\\[1px\\] ~ div h5,
-      .bg-border.w-\\[1px\\] ~ div h6,
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h4,
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h5,
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) h6,
-      [data-testid="conversation-view"] h4,
-      [data-testid="conversation-view"] h5,
-      [data-testid="conversation-view"] h6 {
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) h4:not([role="dialog"] *):not(.settings-modal-container *),
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) h5:not([role="dialog"] *):not(.settings-modal-container *),
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) h6:not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) h4:not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) h5:not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) h6:not([role="dialog"] *):not(.settings-modal-container *),
+      [data-testid="conversation-view"] h4:not([role="dialog"] *):not(.settings-modal-container *),
+      [data-testid="conversation-view"] h5:not([role="dialog"] *):not(.settings-modal-container *),
+      [data-testid="conversation-view"] h6:not([role="dialog"] *):not(.settings-modal-container *) {
         font-size: calc(var(--agy-font-main) * 1.05) !important;
         line-height: 1.45 !important;
         font-weight: 600 !important;
         ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
       }
 
-      /* Markdown Tables Typography: Strict 1:1 synchronization with mainFontSize */
-      .bg-border.w-\\[1px\\] ~ div table,
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) table,
+      /* Markdown Tables Typography: Strict 1:1 synchronization with mainFontSize (strictly exclude dialogs) */
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) table:not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) table:not([role="dialog"] *):not(.settings-modal-container *),
       [data-testid="conversation-view"] table {
         font-size: var(--agy-font-main) !important;
         line-height: var(--agy-font-line-height) !important;
         ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
       }
-      .bg-border.w-\\[1px\\] ~ div table th,
-      .bg-border.w-\\[1px\\] ~ div table td,
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) table th,
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) table td,
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) table td:not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) table td:not([role="dialog"] *):not(.settings-modal-container *),
       [data-testid="conversation-view"] table th,
       [data-testid="conversation-view"] table td {
         font-size: var(--agy-font-main) !important;
         line-height: var(--agy-font-line-height) !important;
         ${uiFont ? 'font-family: var(--agy-font-family-ui);' : ''}
       }
-      .bg-border.w-\\[1px\\] ~ div table th,
-      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]) table th,
+      .bg-border.w-\\[1px\\] ~ div:not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
+      .relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\[1px\\]):not([role="dialog"]):not(.settings-modal-container) table th:not([role="dialog"] *):not(.settings-modal-container *),
       [data-testid="conversation-view"] table th {
         font-weight: 600 !important;
       }
@@ -538,22 +538,24 @@
         <div class="max-w-2xl mx-auto flex flex-col gap-6">
           <!-- Header -->
           <div class="flex flex-col gap-1 mb-1">
-            <h2 class="text-xl font-semibold text-foreground tracking-tight m-0">${curTexts.headerTitle}</h2>
-            <p class="text-xs text-muted-foreground leading-relaxed m-0">${curTexts.headerSubtitle}</p>
+            <h2 class="text-xl m-0 font-medium truncate flex-1 text-foreground">${curTexts.headerTitle}</h2>
+            <div class="text-sm text-muted-foreground bg-transparent">${curTexts.headerSubtitle}</div>
           </div>
 
           <!-- Section 1: Conversation & Typography -->
           <div class="space-y-2">
             <div class="px-0.5">
-              <h3 class="m-0 text-xs font-semibold text-muted-foreground uppercase tracking-wider">${curTexts.sectionConversation}</h3>
+              <h3 class="m-0 text-sm font-medium text-foreground">${curTexts.sectionConversation}</h3>
             </div>
             <div class="bg-transparent rounded-xl border border-border overflow-hidden divide-y divide-border">
               
               <!-- 1. Conversation Text Size -->
-              <div class="py-2.5 px-3.5 flex items-center justify-between gap-4 hover:bg-secondary/15 transition-colors">
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium text-foreground">${curTexts.mainTitle}</div>
-                  <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.mainDesc}</div>
+              <div class="py-2 px-3 w-full bg-transparent flex justify-between gap-4 items-center hover:bg-secondary/15 transition-colors">
+                <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm text-foreground">${curTexts.mainTitle}</span>
+                  </div>
+                  <span class="text-xs text-muted-foreground whitespace-pre-wrap leading-normal">${curTexts.mainDesc}</span>
                 </div>
                 <div class="shrink-0 flex items-center gap-3">
                   <input type="range" id="agy-range-main" min="11" max="36" step="1" value="${currentPrefs.mainFontSize}" class="agy-slider w-28 sm:w-36" />
@@ -565,10 +567,12 @@
               </div>
 
               <!-- 2. Line Height Ratio -->
-              <div class="py-2.5 px-3.5 flex items-center justify-between gap-4 hover:bg-secondary/15 transition-colors">
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium text-foreground">${curTexts.lineHeightTitle}</div>
-                  <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.lineHeightDesc}</div>
+              <div class="py-2 px-3 w-full bg-transparent flex justify-between gap-4 items-center hover:bg-secondary/15 transition-colors">
+                <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm text-foreground">${curTexts.lineHeightTitle}</span>
+                  </div>
+                  <span class="text-xs text-muted-foreground whitespace-pre-wrap leading-normal">${curTexts.lineHeightDesc}</span>
                 </div>
                 <div class="shrink-0 flex items-center gap-3">
                   <input type="range" id="agy-range-line-height" min="1.0" max="2.6" step="0.05" value="${currentPrefs.lineHeight}" class="agy-slider w-28 sm:w-36" />
@@ -579,14 +583,14 @@
               </div>
 
               <!-- 3. Thought & Collapsible Font Size -->
-              <div class="py-2.5 px-3.5 flex flex-col gap-2 hover:bg-secondary/15 transition-colors">
+              <div class="py-2 px-3 w-full bg-transparent flex flex-col gap-2 hover:bg-secondary/15 transition-colors">
                 <div class="flex items-center justify-between gap-4">
-                  <div class="flex-1 min-w-0">
+                  <div class="flex-1 min-w-0 flex flex-col gap-0.5">
                     <div class="flex items-center gap-2">
-                      <span class="text-sm font-medium text-foreground">${curTexts.thoughtTitle}</span>
+                      <span class="text-sm text-foreground">${curTexts.thoughtTitle}</span>
                       <span id="agy-thought-tag" class="text-[10px] px-2 py-0.5 rounded-full font-medium transition-all ${currentPrefs.customThoughtFontSize ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-secondary text-secondary-foreground border border-border/60'}">${currentPrefs.customThoughtFontSize ? curTexts.thoughtCustomTag : curTexts.thoughtAutoTag}</span>
                     </div>
-                    <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.thoughtDesc}</div>
+                    <span class="text-xs text-muted-foreground whitespace-pre-wrap leading-normal">${curTexts.thoughtDesc}</span>
                   </div>
                   <div class="shrink-0 flex items-center gap-2">
                     <button type="button" id="agy-switch-thought" role="switch" aria-checked="${currentPrefs.customThoughtFontSize ? 'true' : 'false'}" class="relative inline-flex items-center rounded-full transition-colors duration-200 ease-in-out shrink-0 h-6 w-11 cursor-pointer outline-none ${currentPrefs.customThoughtFontSize ? 'bg-primary' : 'bg-secondary'}">
@@ -608,10 +612,12 @@
               </div>
 
               <!-- 4. Code Block Font Size -->
-              <div class="py-2.5 px-3.5 flex items-center justify-between gap-4 hover:bg-secondary/15 transition-colors">
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium text-foreground">${curTexts.codeTitle}</div>
-                  <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.codeDesc}</div>
+              <div class="py-2 px-3 w-full bg-transparent flex justify-between gap-4 items-center hover:bg-secondary/15 transition-colors">
+                <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm text-foreground">${curTexts.codeTitle}</span>
+                  </div>
+                  <span class="text-xs text-muted-foreground whitespace-pre-wrap leading-normal">${curTexts.codeDesc}</span>
                 </div>
                 <div class="shrink-0 flex items-center gap-3">
                   <input type="range" id="agy-range-code" min="10" max="28" step="1" value="${currentPrefs.codeFontSize}" class="agy-slider w-28 sm:w-36" />
@@ -628,13 +634,15 @@
           <!-- Section 2: Workspace Sidebar -->
           <div class="space-y-2">
             <div class="px-0.5">
-              <h3 class="m-0 text-xs font-semibold text-muted-foreground uppercase tracking-wider">${curTexts.sectionSidebar}</h3>
+              <h3 class="m-0 text-sm font-medium text-foreground">${curTexts.sectionSidebar}</h3>
             </div>
             <div class="bg-transparent rounded-xl border border-border overflow-hidden divide-y divide-border">
-              <div class="py-2.5 px-3.5 flex items-center justify-between gap-4 hover:bg-secondary/15 transition-colors">
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium text-foreground">${curTexts.sidebarTitle}</div>
-                  <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.sidebarDesc}</div>
+              <div class="py-2 px-3 w-full bg-transparent flex justify-between gap-4 items-center hover:bg-secondary/15 transition-colors">
+                <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm text-foreground">${curTexts.sidebarTitle}</span>
+                  </div>
+                  <span class="text-xs text-muted-foreground whitespace-pre-wrap leading-normal">${curTexts.sidebarDesc}</span>
                 </div>
                 <div class="shrink-0 flex items-center gap-3">
                   <input type="range" id="agy-range-sidebar" min="10" max="24" step="1" value="${currentPrefs.sidebarFontSize}" class="agy-slider w-28 sm:w-36" />
@@ -650,21 +658,21 @@
           <!-- Section 3: Custom Font Families -->
           <div class="space-y-2">
             <div class="px-0.5">
-              <h3 class="m-0 text-xs font-semibold text-muted-foreground uppercase tracking-wider">${curTexts.sectionFontFamily}</h3>
+              <h3 class="m-0 text-sm font-medium text-foreground">${curTexts.sectionFontFamily}</h3>
             </div>
             <div class="bg-transparent rounded-xl border border-border overflow-hidden divide-y divide-border">
               <!-- UI Font Family -->
-              <div class="py-2.5 px-3.5 flex flex-col gap-1.5 hover:bg-secondary/15 transition-colors">
+              <div class="py-2.5 px-3 w-full flex flex-col gap-1.5 hover:bg-secondary/15 transition-colors">
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-foreground">${curTexts.uiFontLabel}</span>
+                  <span class="text-sm text-foreground">${curTexts.uiFontLabel}</span>
                   <span class="text-xs text-muted-foreground">${curTexts.uiFontDesc}</span>
                 </div>
                 <input type="text" id="agy-input-font-family" placeholder='e.g. "PingFang SC", "Segoe UI", sans-serif' value="${currentPrefs.fontFamily || ''}" class="w-full px-3 py-1.5 text-xs bg-background border border-border/80 rounded-lg text-foreground outline-none focus:border-primary shadow-sm" />
               </div>
               <!-- Code Font Family -->
-              <div class="py-2.5 px-3.5 flex flex-col gap-1.5 hover:bg-secondary/15 transition-colors">
+              <div class="py-2.5 px-3 w-full flex flex-col gap-1.5 hover:bg-secondary/15 transition-colors">
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-medium text-foreground">${curTexts.codeFontLabel}</span>
+                  <span class="text-sm text-foreground">${curTexts.codeFontLabel}</span>
                   <span class="text-xs text-muted-foreground">${curTexts.codeFontDesc}</span>
                 </div>
                 <input type="text" id="agy-input-code-font-family" placeholder='e.g. "JetBrains Mono", "Cascadia Code", monospace' value="${currentPrefs.codeFontFamily || ''}" class="w-full px-3 py-1.5 text-xs bg-background border border-border/80 rounded-lg text-foreground outline-none focus:border-primary shadow-sm" />
