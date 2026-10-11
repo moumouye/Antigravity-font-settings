@@ -24,23 +24,27 @@
     zh: {
       navTitle: '字体设置',
       headerTitle: '字体与排版设置',
-      headerSubtitle: '独立自定义左侧边栏、右侧主对话区、折叠思考及排版样式。',
-      sidebarTitle: '左侧边栏字号',
-      sidebarDesc: '控制项目目录树、历史会话列表及侧栏导航文本。',
+      headerSubtitle: '针对对话正文、折叠思考、工作区侧栏及代码块，细粒度定制字号与排版比例。',
+      sectionConversation: '对话与正文排版',
       mainTitle: '对话正文字号',
       mainDesc: '控制 AI 回复正文、表格内容、用户消息气泡及底栏输入框。',
       lineHeightTitle: '正文行高比例',
       lineHeightDesc: '调整对话文本与表格内容的垂直行间距，提供更舒适的阅读排版。',
       thoughtTitle: '折叠与思考字号',
-      thoughtDesc: '控制 AI 思考过程（Thought）、步骤折叠栏与工具执行输出文本。',
+      thoughtDesc: 'AI 思考过程（Thought）、步骤折叠栏与工具执行输出文本。',
       thoughtAutoTag: '等比自适应',
       thoughtCustomTag: '独立自定义',
+      thoughtCustomLabel: '自定义折叠字号',
       codeTitle: '代码块字号',
       codeDesc: '控制等宽代码块与语法高亮区域字号。',
-      customFontTitle: '自定义字体族',
-      customFontDesc: '留空即使用系统默认字体。可输入系统已安装的字体名称，多个字体用逗号分隔。',
+      sectionSidebar: '工作区导航',
+      sidebarTitle: '左侧边栏字号',
+      sidebarDesc: '控制项目目录树、历史会话列表及侧栏导航文本。',
+      sectionFontFamily: '自定义字体族',
       uiFontLabel: '界面字体族',
+      uiFontDesc: '留空使用系统默认字体',
       codeFontLabel: '代码等宽字体族',
+      codeFontDesc: '留空使用系统默认等宽',
       resetBtn: '恢复默认设置',
       langLabel: '界面语言',
       langEnBtn: '英文',
@@ -50,9 +54,8 @@
     en: {
       navTitle: 'Font Settings',
       headerTitle: 'Font & Typography Settings',
-      headerSubtitle: 'Customize typography for sidebar, conversation, thoughts, and code blocks.',
-      sidebarTitle: 'Sidebar Font Size',
-      sidebarDesc: 'Controls project tree, conversation history, and sidebar navigation items.',
+      headerSubtitle: 'Customize typography and font sizes for conversation, thoughts, sidebar, and code blocks.',
+      sectionConversation: 'Conversation & Typography',
       mainTitle: 'Conversation Text Size',
       mainDesc: 'Controls AI responses, tables, user messages, and prompt input text.',
       lineHeightTitle: 'Line Height Ratio',
@@ -61,12 +64,17 @@
       thoughtDesc: 'Controls AI thinking blocks, collapsible steps, and tool execution outputs.',
       thoughtAutoTag: 'Auto-scaled',
       thoughtCustomTag: 'Custom Size',
+      thoughtCustomLabel: 'Custom Folded Size',
       codeTitle: 'Code Block Font Size',
       codeDesc: 'Controls preformatted monospace code blocks and code fences.',
-      customFontTitle: 'Custom Font Families',
-      customFontDesc: 'Leave blank to use system defaults. Enter installed font family names separated by commas.',
+      sectionSidebar: 'Workspace Sidebar',
+      sidebarTitle: 'Sidebar Font Size',
+      sidebarDesc: 'Controls project tree, conversation history, and sidebar navigation items.',
+      sectionFontFamily: 'Font Families',
       uiFontLabel: 'UI Font Family',
+      uiFontDesc: 'Leave blank for system default',
       codeFontLabel: 'Code Font Family',
+      codeFontDesc: 'Leave blank for system monospace',
       resetBtn: 'Reset to Defaults',
       langLabel: 'Language',
       langEnBtn: 'English',
@@ -123,38 +131,53 @@
         ${codeFont ? `--agy-font-family-code: ${codeFont};` : ''}
       }
 
-      /* Slim, elegant slider controls */
+      /* Slim, elegant slider controls adapting cleanly to both light & dark themes */
       .agy-slider {
         -webkit-appearance: none;
         appearance: none;
-        width: 100%;
         height: 4px;
         border-radius: 9999px;
-        background: rgba(255, 255, 255, 0.14);
+        background: var(--border, rgba(128, 128, 128, 0.25));
         outline: none;
         margin: 0;
         padding: 0;
         cursor: pointer;
         display: block;
+        transition: background-color 0.15s ease;
+      }
+      .agy-slider:hover {
+        background: var(--muted-foreground, rgba(128, 128, 128, 0.45));
       }
       .agy-slider::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
-        width: 13px;
-        height: 13px;
+        width: 14px;
+        height: 14px;
         border-radius: 50%;
-        background: #38bdf8;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        background: #0ea5e9;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
         cursor: pointer;
         transition: transform 0.12s ease, background-color 0.12s ease;
-        border: 1.5px solid rgba(255, 255, 255, 0.9);
+        border: 2px solid var(--background, #fff);
       }
       .agy-slider::-webkit-slider-thumb:hover {
-        transform: scale(1.2);
+        transform: scale(1.18);
         background: #0284c7;
       }
       .agy-slider::-webkit-slider-thumb:active {
         transform: scale(1.05);
+      }
+
+      /* Hide native number input spin arrows to eliminate number squeezing */
+      #agy-font-settings-panel input[type="number"]::-webkit-inner-spin-button,
+      #agy-font-settings-panel input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none !important;
+        margin: 0 !important;
+        display: none !important;
+      }
+      #agy-font-settings-panel input[type="number"] {
+        -moz-appearance: textfield !important;
+        appearance: textfield !important;
       }
 
       /* Left Sidebar Typography (Main app window only, strictly exclude settings modal) */
@@ -507,149 +530,163 @@
     const texts = t();
     const container = document.createElement('div');
     container.id = 'agy-font-settings-panel';
-    container.className = 'h-full w-full overflow-y-auto px-8 py-6 select-none';
+    container.className = 'h-full w-full overflow-y-auto px-8 py-6 pb-12 select-none';
 
     function buildHTML() {
       const curTexts = t();
       return `
-        <div class="max-w-xl mx-auto space-y-4">
+        <div class="max-w-2xl mx-auto flex flex-col gap-6">
           <!-- Header -->
-          <div class="mb-5">
-            <h2 class="text-xl font-semibold text-foreground tracking-tight">${curTexts.headerTitle}</h2>
-            <p class="text-xs text-secondary-foreground mt-1 leading-relaxed">${curTexts.headerSubtitle}</p>
+          <div class="flex flex-col gap-1 mb-1">
+            <h2 class="text-xl font-semibold text-foreground tracking-tight m-0">${curTexts.headerTitle}</h2>
+            <p class="text-xs text-muted-foreground leading-relaxed m-0">${curTexts.headerSubtitle}</p>
           </div>
 
-          <!-- 1. Sidebar Font Size -->
-          <div class="bg-secondary/20 border border-border/50 rounded-xl p-4 flex flex-col gap-3">
-            <div class="flex items-center justify-between gap-4">
-              <div class="min-w-0 flex-1">
-                <div class="text-xs font-semibold text-foreground">${curTexts.sidebarTitle}</div>
-                <div class="text-[11px] text-secondary-foreground mt-0.5 leading-normal">${curTexts.sidebarDesc}</div>
-              </div>
-              <div class="flex items-center bg-background border border-border/80 rounded-md px-2 py-0.5 text-xs text-foreground shrink-0 shadow-sm">
-                <input type="number" id="agy-input-sidebar" min="8" max="40" value="${currentPrefs.sidebarFontSize}" class="w-8 text-right bg-transparent outline-none font-mono text-xs pr-1 text-foreground" />
-                <span class="text-[11px] text-secondary-foreground select-none">${curTexts.unitPx}</span>
-              </div>
+          <!-- Section 1: Conversation & Typography -->
+          <div class="space-y-2">
+            <div class="px-0.5">
+              <h3 class="m-0 text-xs font-semibold text-muted-foreground uppercase tracking-wider">${curTexts.sectionConversation}</h3>
             </div>
-            <div>
-              <input type="range" id="agy-range-sidebar" min="10" max="24" step="1" value="${currentPrefs.sidebarFontSize}" class="agy-slider" />
-            </div>
-          </div>
-
-          <!-- 2. Main Conversation Font Size -->
-          <div class="bg-secondary/20 border border-border/50 rounded-xl p-4 flex flex-col gap-3">
-            <div class="flex items-center justify-between gap-4">
-              <div class="min-w-0 flex-1">
-                <div class="text-xs font-semibold text-foreground">${curTexts.mainTitle}</div>
-                <div class="text-[11px] text-secondary-foreground mt-0.5 leading-normal">${curTexts.mainDesc}</div>
-              </div>
-              <div class="flex items-center bg-background border border-border/80 rounded-md px-2 py-0.5 text-xs text-foreground shrink-0 shadow-sm">
-                <input type="number" id="agy-input-main" min="9" max="60" value="${currentPrefs.mainFontSize}" class="w-8 text-right bg-transparent outline-none font-mono text-xs pr-1 text-foreground" />
-                <span class="text-[11px] text-secondary-foreground select-none">${curTexts.unitPx}</span>
-              </div>
-            </div>
-            <div>
-              <input type="range" id="agy-range-main" min="11" max="36" step="1" value="${currentPrefs.mainFontSize}" class="agy-slider" />
-            </div>
-          </div>
-
-          <!-- 3. Line Height Ratio -->
-          <div class="bg-secondary/20 border border-border/50 rounded-xl p-4 flex flex-col gap-3">
-            <div class="flex items-center justify-between gap-4">
-              <div class="min-w-0 flex-1">
-                <div class="text-xs font-semibold text-foreground">${curTexts.lineHeightTitle}</div>
-                <div class="text-[11px] text-secondary-foreground mt-0.5 leading-normal">${curTexts.lineHeightDesc}</div>
-              </div>
-              <div class="flex items-center bg-background border border-border/80 rounded-md px-2 py-0.5 text-xs text-foreground shrink-0 shadow-sm">
-                <input type="number" id="agy-input-line-height" min="1.0" max="3.0" step="0.05" value="${currentPrefs.lineHeight}" class="w-9 text-right bg-transparent outline-none font-mono text-xs text-foreground" />
-              </div>
-            </div>
-            <div>
-              <input type="range" id="agy-range-line-height" min="1.0" max="2.6" step="0.05" value="${currentPrefs.lineHeight}" class="agy-slider" />
-            </div>
-          </div>
-
-          <!-- 4. Thought & Collapsible Font Size (Switch + Expandable Slider) -->
-          <div class="bg-secondary/20 border border-border/50 rounded-xl p-4 flex flex-col gap-3">
-            <div class="flex items-center justify-between gap-4">
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-2">
-                  <span class="text-xs font-semibold text-foreground">${curTexts.thoughtTitle}</span>
-                  <span id="agy-thought-tag" class="text-[10px] px-1.5 py-0.5 rounded-full ${currentPrefs.customThoughtFontSize ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-secondary/60 text-secondary-foreground border border-border/60'}">${currentPrefs.customThoughtFontSize ? curTexts.thoughtCustomTag : curTexts.thoughtAutoTag}</span>
+            <div class="bg-transparent rounded-xl border border-border overflow-hidden divide-y divide-border">
+              
+              <!-- 1. Conversation Text Size -->
+              <div class="py-2.5 px-3.5 flex items-center justify-between gap-4 hover:bg-secondary/15 transition-colors">
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-foreground">${curTexts.mainTitle}</div>
+                  <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.mainDesc}</div>
                 </div>
-                <div class="text-[11px] text-secondary-foreground mt-0.5 leading-normal">${curTexts.thoughtDesc}</div>
-              </div>
-              <div class="flex items-center gap-2 shrink-0">
-                <button type="button" id="agy-switch-thought" role="switch" aria-checked="${currentPrefs.customThoughtFontSize ? 'true' : 'false'}" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out outline-none ${currentPrefs.customThoughtFontSize ? 'bg-primary' : 'bg-secondary'}">
-                  <span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-background shadow-md ring-0 transition duration-200 ease-in-out ${currentPrefs.customThoughtFontSize ? 'translate-x-4' : 'translate-x-0'}"></span>
-                </button>
-              </div>
-            </div>
-            <div id="agy-thought-slider-group" class="pt-1 flex flex-col gap-3 ${currentPrefs.customThoughtFontSize ? '' : 'hidden'}">
-              <div class="flex items-center justify-between gap-4">
-                <span class="text-[11px] text-secondary-foreground">${curTexts.thoughtTitle}</span>
-                <div class="flex items-center bg-background border border-border/80 rounded-md px-2 py-0.5 text-xs text-foreground shrink-0 shadow-sm">
-                  <input type="number" id="agy-input-thought" min="8" max="30" value="${currentPrefs.thoughtFontSize || 13}" class="w-8 text-right bg-transparent outline-none font-mono text-xs pr-1 text-foreground" />
-                  <span class="text-[11px] text-secondary-foreground select-none">${curTexts.unitPx}</span>
+                <div class="shrink-0 flex items-center gap-3">
+                  <input type="range" id="agy-range-main" min="11" max="36" step="1" value="${currentPrefs.mainFontSize}" class="agy-slider w-28 sm:w-36" />
+                  <div class="flex items-center justify-center bg-background border border-border/80 rounded-md px-2 py-1 min-w-[54px] text-xs font-mono font-medium text-foreground shadow-sm shrink-0">
+                    <input type="number" id="agy-input-main" min="9" max="60" value="${currentPrefs.mainFontSize}" class="w-7 text-right bg-transparent outline-none font-mono text-xs font-medium text-foreground pr-0.5" />
+                    <span class="text-[11px] text-muted-foreground select-none">${curTexts.unitPx}</span>
+                  </div>
                 </div>
               </div>
-              <div>
-                <input type="range" id="agy-range-thought" min="9" max="24" step="1" value="${currentPrefs.thoughtFontSize || 13}" class="agy-slider" />
+
+              <!-- 2. Line Height Ratio -->
+              <div class="py-2.5 px-3.5 flex items-center justify-between gap-4 hover:bg-secondary/15 transition-colors">
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-foreground">${curTexts.lineHeightTitle}</div>
+                  <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.lineHeightDesc}</div>
+                </div>
+                <div class="shrink-0 flex items-center gap-3">
+                  <input type="range" id="agy-range-line-height" min="1.0" max="2.6" step="0.05" value="${currentPrefs.lineHeight}" class="agy-slider w-28 sm:w-36" />
+                  <div class="flex items-center justify-center bg-background border border-border/80 rounded-md px-2 py-1 min-w-[48px] text-xs font-mono font-medium text-foreground shadow-sm shrink-0">
+                    <input type="number" id="agy-input-line-height" min="1.0" max="3.0" step="0.05" value="${currentPrefs.lineHeight}" class="w-9 text-center bg-transparent outline-none font-mono text-xs font-medium text-foreground" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Thought & Collapsible Font Size -->
+              <div class="py-2.5 px-3.5 flex flex-col gap-2 hover:bg-secondary/15 transition-colors">
+                <div class="flex items-center justify-between gap-4">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-foreground">${curTexts.thoughtTitle}</span>
+                      <span id="agy-thought-tag" class="text-[10px] px-2 py-0.5 rounded-full font-medium transition-all ${currentPrefs.customThoughtFontSize ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-secondary text-secondary-foreground border border-border/60'}">${currentPrefs.customThoughtFontSize ? curTexts.thoughtCustomTag : curTexts.thoughtAutoTag}</span>
+                    </div>
+                    <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.thoughtDesc}</div>
+                  </div>
+                  <div class="shrink-0 flex items-center gap-2">
+                    <button type="button" id="agy-switch-thought" role="switch" aria-checked="${currentPrefs.customThoughtFontSize ? 'true' : 'false'}" class="relative inline-flex items-center rounded-full transition-colors duration-200 ease-in-out shrink-0 h-6 w-11 cursor-pointer outline-none ${currentPrefs.customThoughtFontSize ? 'bg-primary' : 'bg-secondary'}">
+                      <span class="inline-block rounded-full bg-white transition-transform duration-200 ease-in-out shadow-sm h-4 w-4" style="transform: ${currentPrefs.customThoughtFontSize ? 'translateX(24px)' : 'translateX(4px)'};"></span>
+                    </button>
+                  </div>
+                </div>
+                <!-- Sub-row when Custom is enabled -->
+                <div id="agy-thought-slider-group" class="pt-2 mt-1 border-t border-border/50 flex items-center justify-between gap-4 ${currentPrefs.customThoughtFontSize ? '' : 'hidden'}">
+                  <span class="text-xs text-muted-foreground">${curTexts.thoughtCustomLabel}</span>
+                  <div class="shrink-0 flex items-center gap-3">
+                    <input type="range" id="agy-range-thought" min="9" max="24" step="1" value="${currentPrefs.thoughtFontSize || 13}" class="agy-slider w-28 sm:w-36" />
+                    <div class="flex items-center justify-center bg-background border border-border/80 rounded-md px-2 py-1 min-w-[54px] text-xs font-mono font-medium text-foreground shadow-sm shrink-0">
+                      <input type="number" id="agy-input-thought" min="8" max="30" value="${currentPrefs.thoughtFontSize || 13}" class="w-7 text-right bg-transparent outline-none font-mono text-xs font-medium text-foreground pr-0.5" />
+                      <span class="text-[11px] text-muted-foreground select-none">${curTexts.unitPx}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Code Block Font Size -->
+              <div class="py-2.5 px-3.5 flex items-center justify-between gap-4 hover:bg-secondary/15 transition-colors">
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-foreground">${curTexts.codeTitle}</div>
+                  <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.codeDesc}</div>
+                </div>
+                <div class="shrink-0 flex items-center gap-3">
+                  <input type="range" id="agy-range-code" min="10" max="28" step="1" value="${currentPrefs.codeFontSize}" class="agy-slider w-28 sm:w-36" />
+                  <div class="flex items-center justify-center bg-background border border-border/80 rounded-md px-2 py-1 min-w-[54px] text-xs font-mono font-medium text-foreground shadow-sm shrink-0">
+                    <input type="number" id="agy-input-code" min="8" max="40" value="${currentPrefs.codeFontSize}" class="w-7 text-right bg-transparent outline-none font-mono text-xs font-medium text-foreground pr-0.5" />
+                    <span class="text-[11px] text-muted-foreground select-none">${curTexts.unitPx}</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Section 2: Workspace Sidebar -->
+          <div class="space-y-2">
+            <div class="px-0.5">
+              <h3 class="m-0 text-xs font-semibold text-muted-foreground uppercase tracking-wider">${curTexts.sectionSidebar}</h3>
+            </div>
+            <div class="bg-transparent rounded-xl border border-border overflow-hidden divide-y divide-border">
+              <div class="py-2.5 px-3.5 flex items-center justify-between gap-4 hover:bg-secondary/15 transition-colors">
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium text-foreground">${curTexts.sidebarTitle}</div>
+                  <div class="text-xs text-muted-foreground mt-0.5 leading-normal">${curTexts.sidebarDesc}</div>
+                </div>
+                <div class="shrink-0 flex items-center gap-3">
+                  <input type="range" id="agy-range-sidebar" min="10" max="24" step="1" value="${currentPrefs.sidebarFontSize}" class="agy-slider w-28 sm:w-36" />
+                  <div class="flex items-center justify-center bg-background border border-border/80 rounded-md px-2 py-1 min-w-[54px] text-xs font-mono font-medium text-foreground shadow-sm shrink-0">
+                    <input type="number" id="agy-input-sidebar" min="8" max="40" value="${currentPrefs.sidebarFontSize}" class="w-7 text-right bg-transparent outline-none font-mono text-xs font-medium text-foreground pr-0.5" />
+                    <span class="text-[11px] text-muted-foreground select-none">${curTexts.unitPx}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- 5. Code Block Font Size -->
-          <div class="bg-secondary/20 border border-border/50 rounded-xl p-4 flex flex-col gap-3">
-            <div class="flex items-center justify-between gap-4">
-              <div class="min-w-0 flex-1">
-                <div class="text-xs font-semibold text-foreground">${curTexts.codeTitle}</div>
-                <div class="text-[11px] text-secondary-foreground mt-0.5 leading-normal">${curTexts.codeDesc}</div>
-              </div>
-              <div class="flex items-center bg-background border border-border/80 rounded-md px-2 py-0.5 text-xs text-foreground shrink-0 shadow-sm">
-                <input type="number" id="agy-input-code" min="8" max="40" value="${currentPrefs.codeFontSize}" class="w-8 text-right bg-transparent outline-none font-mono text-xs pr-1 text-foreground" />
-                <span class="text-[11px] text-secondary-foreground select-none">${curTexts.unitPx}</span>
-              </div>
+          <!-- Section 3: Custom Font Families -->
+          <div class="space-y-2">
+            <div class="px-0.5">
+              <h3 class="m-0 text-xs font-semibold text-muted-foreground uppercase tracking-wider">${curTexts.sectionFontFamily}</h3>
             </div>
-            <div>
-              <input type="range" id="agy-range-code" min="10" max="28" step="1" value="${currentPrefs.codeFontSize}" class="agy-slider" />
-            </div>
-          </div>
-
-          <!-- 6. Custom Font Families -->
-          <div class="bg-secondary/20 border border-border/50 rounded-xl p-4 flex flex-col gap-3">
-            <div>
-              <div class="text-xs font-semibold text-foreground">${curTexts.customFontTitle}</div>
-              <div class="text-[11px] text-secondary-foreground mt-0.5 leading-normal">${curTexts.customFontDesc}</div>
-            </div>
-            <div class="space-y-3 pt-1">
-              <div>
-                <label class="block text-[11px] font-medium text-secondary-foreground mb-1">${curTexts.uiFontLabel}</label>
-                <input type="text" id="agy-input-font-family" placeholder='e.g. "PingFang SC", "Segoe UI", sans-serif' value="${currentPrefs.fontFamily || ''}" class="w-full px-2.5 py-1 text-xs bg-background border border-border/80 rounded-md text-foreground outline-none focus:border-primary shadow-sm" />
+            <div class="bg-transparent rounded-xl border border-border overflow-hidden divide-y divide-border">
+              <!-- UI Font Family -->
+              <div class="py-2.5 px-3.5 flex flex-col gap-1.5 hover:bg-secondary/15 transition-colors">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-foreground">${curTexts.uiFontLabel}</span>
+                  <span class="text-xs text-muted-foreground">${curTexts.uiFontDesc}</span>
+                </div>
+                <input type="text" id="agy-input-font-family" placeholder='e.g. "PingFang SC", "Segoe UI", sans-serif' value="${currentPrefs.fontFamily || ''}" class="w-full px-3 py-1.5 text-xs bg-background border border-border/80 rounded-lg text-foreground outline-none focus:border-primary shadow-sm" />
               </div>
-              <div>
-                <label class="block text-[11px] font-medium text-secondary-foreground mb-1">${curTexts.codeFontLabel}</label>
-                <input type="text" id="agy-input-code-font-family" placeholder='e.g. "JetBrains Mono", "Cascadia Code", monospace' value="${currentPrefs.codeFontFamily || ''}" class="w-full px-2.5 py-1 text-xs bg-background border border-border/80 rounded-md text-foreground outline-none focus:border-primary shadow-sm" />
+              <!-- Code Font Family -->
+              <div class="py-2.5 px-3.5 flex flex-col gap-1.5 hover:bg-secondary/15 transition-colors">
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-medium text-foreground">${curTexts.codeFontLabel}</span>
+                  <span class="text-xs text-muted-foreground">${curTexts.codeFontDesc}</span>
+                </div>
+                <input type="text" id="agy-input-code-font-family" placeholder='e.g. "JetBrains Mono", "Cascadia Code", monospace' value="${currentPrefs.codeFontFamily || ''}" class="w-full px-3 py-1.5 text-xs bg-background border border-border/80 rounded-lg text-foreground outline-none focus:border-primary shadow-sm" />
               </div>
             </div>
           </div>
 
-          <!-- Bottom Bar: Language Switch & Reset Button -->
-          <div class="flex items-center justify-between pt-3 pb-6 border-t border-border/40">
-            <!-- Language Toggle Switch -->
-            <div class="flex items-center gap-2">
-              <span class="text-xs text-secondary-foreground font-medium">${curTexts.langLabel}</span>
+          <!-- Bottom Action Bar: Language Switch & Reset -->
+          <div class="flex items-center justify-between pt-3 pb-10 border-t border-border/50">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xs text-muted-foreground font-medium">${curTexts.langLabel}</span>
               <div class="inline-flex items-center bg-secondary/50 p-0.5 rounded-lg border border-border/60 text-xs">
-                <button type="button" id="agy-lang-en" class="px-2.5 py-1 rounded-md text-xs transition-all ${currentPrefs.language === 'en' ? 'bg-background text-foreground font-medium shadow-sm' : 'text-secondary-foreground hover:text-foreground'}">${curTexts.langEnBtn}</button>
-                <button type="button" id="agy-lang-zh" class="px-2.5 py-1 rounded-md text-xs transition-all ${currentPrefs.language === 'zh' ? 'bg-background text-foreground font-medium shadow-sm' : 'text-secondary-foreground hover:text-foreground'}">${curTexts.langZhBtn}</button>
+                <button type="button" id="agy-lang-en" class="px-2.5 py-1 rounded-md text-xs font-medium transition-all ${currentPrefs.language === 'en' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}">${curTexts.langEnBtn}</button>
+                <button type="button" id="agy-lang-zh" class="px-2.5 py-1 rounded-md text-xs font-medium transition-all ${currentPrefs.language === 'zh' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}">${curTexts.langZhBtn}</button>
               </div>
             </div>
 
-            <!-- Reset Button -->
-            <button type="button" id="agy-btn-reset" class="px-3.5 py-1.5 text-xs font-medium rounded-lg bg-secondary/60 text-secondary-foreground hover:bg-secondary hover:text-foreground transition-all cursor-pointer border border-border/60">
+            <button type="button" id="agy-btn-reset" class="px-3.5 py-1.5 text-xs font-medium rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:text-foreground transition-all cursor-pointer border border-border/60 shadow-sm">
               ${curTexts.resetBtn}
             </button>
           </div>
+
         </div>
       `;
     }
