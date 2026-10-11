@@ -2,7 +2,7 @@
 
 自定义 Antigravity 2.0 桌面客户端字体大小与排版的轻量级扩展。
 
-无需解包或修改 `app.asar`，利用 Antigravity 原生 Sidecar 机制与 DevTools 调试通道（CDP），无侵入实现左右两侧独立排版调节与持久化存储。
+无需解包或修改 `app.asar`，利用 Antigravity 原生 Sidecar 机制与 DevTools 调试通道（CDP），无侵入实现左右两侧独立排版调节与持久化存储。详细设计与时序图见 [ARCHITECTURE.md](ARCHITECTURE.md)。
 
 ---
 
@@ -66,6 +66,7 @@ python3 manage.py install
 Antigravity-font-settings/
 ├── plugin.json              # Antigravity 插件清单
 ├── manage.py                # 跨平台一键安装/管理工具（零外部依赖）
+├── ARCHITECTURE.md          # 系统架构设计与 Mermaid 交互时序图
 ├── assets/
 │   └── logo.svg             # 插件图标
 ├── sidecars/
