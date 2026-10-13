@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+- 🐛 修复宿主更新与窗口重载后插件失效缺陷：解决 Antigravity 升级/重启或页面重载后 CDP 执行上下文重建导致脚本丢失的问题；补齐 `Page.enable` 协议激活与 `DOMContentLoaded` 安全挂载守卫，并在 Sidecar 轮询中引入 3 秒全自愈心跳与 `Appearance` / `外观` 双语弹窗容错侦测，杜绝设置面板消失与字号控制断联
+- 🔧 优化端到端测试 CDP 端口解析：`test_e2e.mjs` 改为动态读取宿主 `DevToolsActivePort` 端口文件，彻底消除端口变更导致连接拒绝的问题
 - ✨ 新增「滑块背景透明穿透模式 (Slider Ghost Peeking Mode)」：彻底移除冗余占地的静态预览卡片，恢复面板原生精致紧凑感；当用户按下/拖动任意滑块时，遮罩层与弹窗背景即刻全透明穿透，仅保留当前活动滑块与浮动数值胶囊（`19 px`），直视底层真实对话与代码块 60fps 即时缩放，松开指针平滑过渡恢复正常界面
 
 - 💄 像素级对齐官方设置视觉规范：全面对齐 Application 原生面板结构，采用 `text-sm font-medium text-foreground` 分区标题、`text-sm` 紧凑行高与 `py-2 px-3` 行内边距，消除字号、字重与字色不匹配问题

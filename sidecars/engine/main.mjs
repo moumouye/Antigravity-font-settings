@@ -53,10 +53,20 @@ async function savePrefs(prefs) {
   }
 }
 
+function buildWrappedScript(injectScript, savedPrefs) {
+  return `
+    try {
+      localStorage.setItem('antigravity_font_settings_v1', ${JSON.stringify(JSON.stringify(savedPrefs))});
+    } catch {}
+    ${injectScript}
+  `;
+}
+
 class CdpClient {
-  constructor(wsUrl, onBinding) {
+  constructor(wsUrl, onBinding, onNavigated) {
     this.wsUrl = wsUrl;
     this.onBinding = onBinding;
+    this.onNavigated = onNavigated;
     this.nextId = 1;
     this.pending = new Map();
     this.ws = null;
@@ -75,8 +85,10 @@ class CdpClient {
           else resolve(msg.result);
         } else if (msg.method === 'Runtime.bindingCalled') {
           if (msg.params?.name === '__agyFontSavePrefs') {
-            this.onBinding(msg.params.payload);
+            this.onBinding?.(msg.params.payload);
           }
+        } else if (msg.method === 'Page.loadEventFired' || msg.method === 'Page.frameNavigated') {
+          this.onNavigated?.();
         }
       } catch {}
     });
@@ -145,25 +157,30 @@ async function discoverPages(port) {
 }
 
 async function attachToPage(target, injectScript, savedPrefs) {
-  const client = new CdpClient(target.webSocketDebuggerUrl, async (payload) => {
+  let client;
+  const onReload = async () => {
+    try {
+      const wrapped = buildWrappedScript(injectScript, savedPrefs);
+      await client?.send('Runtime.addBinding', { name: '__agyFontSavePrefs' });
+      await client?.send('Page.addScriptToEvaluateOnNewDocument', { source: wrapped });
+      await client?.send('Runtime.evaluate', { expression: wrapped });
+    } catch {}
+  };
+
+  client = new CdpClient(target.webSocketDebuggerUrl, async (payload) => {
     try {
       const parsed = JSON.parse(payload);
       await savePrefs(parsed);
       console.log('[Font Engine] Saved updated preferences');
     } catch {}
-  });
+  }, onReload);
 
   await client.connect();
+  await client.send('Page.enable');
   await client.send('Runtime.enable');
   await client.send('Runtime.addBinding', { name: '__agyFontSavePrefs' });
 
-  const wrappedScript = `
-    try {
-      localStorage.setItem('antigravity_font_settings_v1', ${JSON.stringify(JSON.stringify(savedPrefs))});
-    } catch {}
-    ${injectScript}
-  `;
-
+  const wrappedScript = buildWrappedScript(injectScript, savedPrefs);
   await client.send('Page.addScriptToEvaluateOnNewDocument', { source: wrappedScript });
   await client.send('Runtime.evaluate', { expression: wrappedScript });
   return client;
@@ -193,8 +210,16 @@ async function buildInjectScript() {
   ${cleanPanel}
 
   // 4. Client Entry Execution
-  if (typeof initClient === 'function') {
-    initClient(CLIENT_STYLES, DEFAULT_PREFS, getTexts);
+  function __agyRunClient() {
+    if (typeof initClient === 'function') {
+      initClient(CLIENT_STYLES, DEFAULT_PREFS, getTexts);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', __agyRunClient, { once: true });
+  } else {
+    __agyRunClient();
   }
 })();\n`;
   }
@@ -240,20 +265,35 @@ async function tick() {
         } catch (err) {
           console.error('[Font Engine] Failed to attach to page:', err.message);
         }
-      } else if (scriptChanged) {
+      } else {
+        const client = activeSessions.get(page.webSocketDebuggerUrl);
+        let isAlive = false;
         try {
-          const client = activeSessions.get(page.webSocketDebuggerUrl);
-          const wrappedScript = `
-            try {
-              localStorage.setItem('antigravity_font_settings_v1', ${JSON.stringify(JSON.stringify(savedPrefs))});
-            } catch {}
-            ${injectScript}
-          `;
-          await client.send('Page.addScriptToEvaluateOnNewDocument', { source: wrappedScript });
-          await client.send('Runtime.evaluate', { expression: wrappedScript });
-          console.log('[Font Engine] Hot-reloaded updated script into renderer:', page.id);
-        } catch (err) {
-          console.error('[Font Engine] Failed to hot-reload page:', err.message);
+          const checkRes = await client.send('Runtime.evaluate', {
+            expression: 'Boolean(window.__agyFontSettingsCleanup && document.getElementById("agy-font-settings-style"))',
+            returnByValue: true
+          });
+          isAlive = Boolean(checkRes?.result?.value);
+        } catch {
+          isAlive = false;
+        }
+
+        if (!isAlive || scriptChanged) {
+          try {
+            const wrappedScript = buildWrappedScript(injectScript, savedPrefs);
+            await client.send('Page.enable');
+            await client.send('Runtime.enable');
+            await client.send('Runtime.addBinding', { name: '__agyFontSavePrefs' });
+            await client.send('Page.addScriptToEvaluateOnNewDocument', { source: wrappedScript });
+            await client.send('Runtime.evaluate', { expression: wrappedScript });
+            if (!isAlive) {
+              console.log('[Font Engine] Re-injected font settings into renderer (context restored):', page.id);
+            } else {
+              console.log('[Font Engine] Hot-reloaded updated script into renderer:', page.id);
+            }
+          } catch (err) {
+            console.error('[Font Engine] Failed to update page:', err.message);
+          }
         }
       }
     }

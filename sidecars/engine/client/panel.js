@@ -50,7 +50,7 @@ export function initClient(clientStyles, defaultPrefs, getTexts) {
     if (!style) {
       style = document.createElement('style');
       style.id = 'agy-font-settings-style';
-      document.head.appendChild(style);
+      (document.head || document.documentElement).appendChild(style);
     }
 
     const sbSize = Math.max(8, Number(prefs.sidebarFontSize) || 14);
@@ -259,21 +259,29 @@ export function initClient(clientStyles, defaultPrefs, getTexts) {
   // 3. Settings Modal Observer
   function setupSettingsObserver() {
     const checkAndInject = () => {
-      const dialog = document.querySelector('div[role="dialog"].settings-modal-container');
+      const dialog = document.querySelector('div[role="dialog"].settings-modal-container') ||
+                     document.querySelector('div[role="dialog"][aria-label="Settings"]') ||
+                     document.querySelector('div[role="dialog"]');
       if (!dialog) return;
 
       if (dialog.querySelector('#agy-font-settings-tab')) return;
 
       const appearanceBtn = /** @type {HTMLButtonElement | undefined} */ (
-        Array.from(dialog.querySelectorAll('button')).find(b => b.textContent?.trim() === 'Appearance')
+        Array.from(dialog.querySelectorAll('button')).find(b => {
+          const txt = b.textContent?.trim();
+          return txt === 'Appearance' || txt === '外观';
+        })
       );
       if (!appearanceBtn) return;
 
       injectTabAndPanel(dialog, appearanceBtn);
     };
 
+    const target = document.body || document.documentElement;
     const observer = new MutationObserver(checkAndInject);
-    observer.observe(document.body, { childList: true, subtree: true });
+    if (target) {
+      observer.observe(target, { childList: true, subtree: true });
+    }
     checkAndInject();
     return observer;
   }

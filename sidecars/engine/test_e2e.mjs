@@ -1,9 +1,31 @@
 import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+function getProfileDir() {
+  const platform = process.platform;
+  const home = homedir();
+  if (platform === 'darwin') {
+    return join(home, 'Library', 'Application Support', 'Antigravity');
+  } else if (platform === 'win32') {
+    return join(process.env.LOCALAPPDATA || join(home, 'AppData', 'Local'), 'Antigravity');
+  } else {
+    return join(process.env.XDG_CONFIG_HOME || join(home, '.config'), 'Antigravity');
+  }
+}
+
+async function getDevToolsPort() {
+  const portFile = join(getProfileDir(), 'DevToolsActivePort');
+  if (!existsSync(portFile)) return null;
+  const content = await readFile(portFile, 'utf8');
+  const port = parseInt(content.trim().split(/\r?\n/)[0], 10);
+  return Number.isInteger(port) && port > 0 ? port : null;
+}
 
 async function runE2ETest() {
   console.log('=== [1/5] 读取与装配 client/ 源码模块 ===');
@@ -27,7 +49,11 @@ async function runE2ETest() {
   console.log('装配成功，生成的自执行脚本长度:', bundled.length, '字符');
 
   console.log('\n=== [2/5] 探测 CDP 调试端口并建立调试会话 ===');
-  const portRes = await fetch('http://127.0.0.1:54153/json/list');
+  const port = await getDevToolsPort();
+  if (!port) {
+    throw new Error('未检测到 Antigravity 调试端口文件 (DevToolsActivePort)');
+  }
+  const portRes = await fetch(`http://127.0.0.1:${port}/json/list`);
   const pages = await portRes.json();
   const page = pages.find(p => p.type === 'page' && p.url && (p.url.includes('127.0.0.1') || p.url.includes('localhost')));
   if (!page) {
