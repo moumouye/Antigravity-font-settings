@@ -55,32 +55,23 @@ export function initClient(clientStyles, defaultPrefs, getTexts) {
 
     const sbSize = Math.max(8, Number(prefs.sidebarFontSize) || 14);
     const mainSize = Math.max(9, Number(prefs.mainFontSize) || 15);
-    const codeSize = Math.max(8, Number(prefs.codeFontSize) || 13);
     const lHeight = Math.max(1, Number(prefs.lineHeight) || 1.6);
     const customThought = Boolean(prefs.customThoughtFontSize);
     const thoughtSize = customThought
       ? Math.max(8, Number(prefs.thoughtFontSize) || 13)
       : Math.round(mainSize * 0.85);
-    const uiFont = (prefs.fontFamily || '').trim();
-    const codeFont = (prefs.codeFontFamily || '').trim();
 
     const rootVars = `
       :root {
         --agy-font-sidebar: ${sbSize}px;
         --agy-font-main: ${mainSize}px;
-        --agy-font-code: ${codeSize}px;
+        --agy-font-code: var(--agy-font-main);
         --agy-font-thought: ${customThought ? `${thoughtSize}px` : `calc(var(--agy-font-main) * 0.85)`};
         --agy-font-line-height: ${lHeight};
-        ${uiFont ? `--agy-font-family-ui: ${uiFont};` : ''}
-        ${codeFont ? `--agy-font-family-code: ${codeFont};` : ''}
       }
     `;
 
     style.textContent = rootVars + '\n' + clientStyles;
-
-    const root = document.documentElement;
-    root.classList.toggle('agy-has-ui-font', Boolean(uiFont));
-    root.classList.toggle('agy-has-code-font', Boolean(codeFont));
   }
 
   // 2. Save preferences and sync with backend
@@ -377,23 +368,6 @@ export function initClient(clientStyles, defaultPrefs, getTexts) {
                 </div>
               </div>
 
-              <!-- 4. Code Block Font Size -->
-              <div class="agy-setting-row py-2 px-3 w-full bg-transparent flex justify-between gap-4 items-center hover:bg-secondary/15 transition-colors">
-                <div class="agy-row-label flex-1 min-w-0 flex flex-col gap-0.5">
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-sm text-foreground">${curTexts.codeTitle}</span>
-                  </div>
-                  <span class="text-xs text-muted-foreground whitespace-pre-wrap leading-normal">${curTexts.codeDesc}</span>
-                </div>
-                <div class="agy-slider-control-group shrink-0 flex items-center justify-end gap-3 w-56 sm:w-64">
-                  <input type="range" id="agy-range-code" min="10" max="28" step="1" value="${currentPrefs.codeFontSize}" class="agy-slider w-28 sm:w-36 shrink-0" />
-                  <div class="agy-number-capsule flex items-center justify-end bg-background border border-border/80 rounded-md px-1.5 py-1 w-[62px] h-7 text-xs font-mono font-medium text-foreground shadow-sm shrink-0">
-                    <input type="number" id="agy-input-code" min="8" max="40" value="${currentPrefs.codeFontSize}" class="w-8 text-right bg-transparent outline-none font-mono text-xs font-semibold text-foreground pr-0.5" />
-                    <span class="text-[11px] text-muted-foreground select-none w-3.5 text-left shrink-0">${curTexts.unitPx}</span>
-                  </div>
-                </div>
-              </div>
-
             </div>
           </div>
 
@@ -417,31 +391,6 @@ export function initClient(clientStyles, defaultPrefs, getTexts) {
                     <span class="text-[11px] text-muted-foreground select-none w-3.5 text-left shrink-0">${curTexts.unitPx}</span>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 3: Custom Font Families -->
-          <div class="agy-peek-hide space-y-2">
-            <div class="px-0.5">
-              <h3 class="m-0 text-sm font-medium text-foreground">${curTexts.sectionFontFamily}</h3>
-            </div>
-            <div class="bg-transparent rounded-xl border border-border overflow-hidden divide-y divide-border">
-              <!-- UI Font Family -->
-              <div class="py-2.5 px-3 w-full flex flex-col gap-1.5 hover:bg-secondary/15 transition-colors">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm text-foreground">${curTexts.uiFontLabel}</span>
-                  <span class="text-xs text-muted-foreground">${curTexts.uiFontDesc}</span>
-                </div>
-                <input type="text" id="agy-input-font-family" placeholder='e.g. "PingFang SC", "Segoe UI", sans-serif' value="${currentPrefs.fontFamily || ''}" class="w-full px-3 py-1.5 text-xs bg-background border border-border/80 rounded-lg text-foreground outline-none focus:border-primary shadow-sm" />
-              </div>
-              <!-- Code Font Family -->
-              <div class="py-2.5 px-3 w-full flex flex-col gap-1.5 hover:bg-secondary/15 transition-colors">
-                <div class="flex items-center justify-between">
-                  <span class="text-sm text-foreground">${curTexts.codeFontLabel}</span>
-                  <span class="text-xs text-muted-foreground">${curTexts.codeFontDesc}</span>
-                </div>
-                <input type="text" id="agy-input-code-font-family" placeholder='e.g. "JetBrains Mono", "Cascadia Code", monospace' value="${currentPrefs.codeFontFamily || ''}" class="w-full px-3 py-1.5 text-xs bg-background border border-border/80 rounded-lg text-foreground outline-none focus:border-primary shadow-sm" />
               </div>
             </div>
           </div>
@@ -475,10 +424,6 @@ export function initClient(clientStyles, defaultPrefs, getTexts) {
       const switchThought = /** @type {HTMLButtonElement | null} */ (container.querySelector('#agy-switch-thought'));
       const rangeThought = /** @type {HTMLInputElement | null} */ (container.querySelector('#agy-range-thought'));
       const inputThought = /** @type {HTMLInputElement | null} */ (container.querySelector('#agy-input-thought'));
-      const rangeCode = /** @type {HTMLInputElement | null} */ (container.querySelector('#agy-range-code'));
-      const inputCode = /** @type {HTMLInputElement | null} */ (container.querySelector('#agy-input-code'));
-      const inputFontFamily = /** @type {HTMLInputElement | null} */ (container.querySelector('#agy-input-font-family'));
-      const inputCodeFontFamily = /** @type {HTMLInputElement | null} */ (container.querySelector('#agy-input-code-font-family'));
       const btnReset = /** @type {HTMLButtonElement | null} */ (container.querySelector('#agy-btn-reset'));
       const btnEn = /** @type {HTMLButtonElement | null} */ (container.querySelector('#agy-lang-en'));
       const btnZh = /** @type {HTMLButtonElement | null} */ (container.querySelector('#agy-lang-zh'));
@@ -516,7 +461,6 @@ export function initClient(clientStyles, defaultPrefs, getTexts) {
       if (rangeMain) bindSliderPeeking(rangeMain);
       if (rangeLineHeight) bindSliderPeeking(rangeLineHeight);
       if (rangeThought) bindSliderPeeking(rangeThought);
-      if (rangeCode) bindSliderPeeking(rangeCode);
       if (rangeSidebar) bindSliderPeeking(rangeSidebar);
 
       /** @param {string} val */
@@ -564,27 +508,6 @@ export function initClient(clientStyles, defaultPrefs, getTexts) {
             thoughtFontSize: currentPrefs.thoughtFontSize || 13
           });
           reRender();
-        });
-      }
-
-      /** @param {string} val */
-      function syncCode(val) {
-        if (rangeCode) rangeCode.value = val;
-        if (inputCode) inputCode.value = val;
-        savePrefs({ codeFontSize: Number(val) });
-      }
-      if (rangeCode) rangeCode.addEventListener('input', e => syncCode(/** @type {HTMLInputElement} */ (e.target).value));
-      if (inputCode) inputCode.addEventListener('input', e => syncCode(/** @type {HTMLInputElement} */ (e.target).value));
-
-      if (inputFontFamily) {
-        inputFontFamily.addEventListener('input', e => {
-          savePrefs({ fontFamily: /** @type {HTMLInputElement} */ (e.target).value });
-        });
-      }
-
-      if (inputCodeFontFamily) {
-        inputCodeFontFamily.addEventListener('input', e => {
-          savePrefs({ codeFontFamily: /** @type {HTMLInputElement} */ (e.target).value });
         });
       }
 
@@ -638,13 +561,10 @@ export function initClient(clientStyles, defaultPrefs, getTexts) {
     if (style) style.remove();
     document.body.classList.remove('agy-peeking');
     const root = document.documentElement;
-    root.classList.remove('agy-has-ui-font', 'agy-has-code-font');
     root.style.removeProperty('--agy-font-sidebar');
     root.style.removeProperty('--agy-font-main');
     root.style.removeProperty('--agy-font-code');
     root.style.removeProperty('--agy-font-thought');
     root.style.removeProperty('--agy-font-line-height');
-    root.style.removeProperty('--agy-font-family-ui');
-    root.style.removeProperty('--agy-font-family-code');
   };
 }

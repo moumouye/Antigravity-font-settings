@@ -12,6 +12,12 @@ __pycache__/
 *$py.class
 .venv/
 
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
 # Extension Runtime Data
 sidecars/engine/data/
 *.tmp

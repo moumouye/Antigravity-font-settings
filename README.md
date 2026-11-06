@@ -1,85 +1,135 @@
+<div align="center">
+
+![Antigravity Font Settings Logo](./assets/logo.svg)
+
 # Antigravity Font Settings
 
-自定义 Antigravity 2.0 桌面客户端字体大小与排版的轻量级扩展。
+**细粒度定制 Google Antigravity 桌面客户端字体大小与排版的轻量级扩展**
 
-无需解包或修改 `app.asar`，利用 Antigravity 原生 Sidecar 机制与 DevTools 调试通道（CDP），无侵入实现左右两侧独立排版调节与持久化存储。详细设计与时序图见 [ARCHITECTURE.md](ARCHITECTURE.md)。
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg?style=flat-square)](CHANGELOG.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-brightgreen.svg?style=flat-square)](#快速安装-quick-installation)
+
+</div>
+
+---
+
+## 效果预览
+
+![Font Settings 设置面板预览](./assets/preview.png)
+
+---
+
+## 快速安装 (Quick Installation)
+
+复制以下命令并在终端中执行，即可通过一键脚本自动完成下载、注册与启用：
+
+### 🍎 macOS / Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/moumouye/Antigravity-font-settings/main/install.sh | bash
+```
+
+### 🪟 Windows
+
+**PowerShell（推荐）**：
+```powershell
+irm https://raw.githubusercontent.com/moumouye/Antigravity-font-settings/main/install.ps1 | iex
+```
+
+*CMD / `curl.exe` 方式*：
+```cmd
+curl.exe -fsSL https://raw.githubusercontent.com/moumouye/Antigravity-font-settings/main/install.ps1 | powershell -
+```
+
+---
+
+### 🚀 使用方法
+
+1. **执行安装**：在系统终端中运行上述对应系统的一键安装命令；
+2. **重启客户端**：完全退出并重新打开 Antigravity 桌面应用；
+3. **打开设置调节**：
+   - 按下快捷键 `Cmd+,`（macOS）或 `Ctrl+,`（Windows）；
+   - 在左侧导航菜单中点击 **「Font Settings」** 即可实时调整。
+
+---
+
+## 一键卸载 (Quick Uninstall)
+
+若需完全卸载插件并彻底恢复 Antigravity 默认外观，运行以下命令即可全自动终止后台进程、注销配置并清除所有数据残留（零残留清理）：
+
+### 🍎 macOS / Linux
+```bash
+curl -fsSL https://raw.githubusercontent.com/moumouye/Antigravity-font-settings/main/uninstall.sh | bash
+```
+
+### 🪟 Windows
+```powershell
+irm https://raw.githubusercontent.com/moumouye/Antigravity-font-settings/main/uninstall.ps1 | iex
+```
+*CMD / `curl.exe` 方式*：
+```cmd
+curl.exe -fsSL https://raw.githubusercontent.com/moumouye/Antigravity-font-settings/main/uninstall.ps1 | powershell -
+```
 
 ---
 
 ## 核心特性
 
-- **左右独立缩放**：左侧侧边栏（项目树、会话历史）与右侧主工作区（对话正文、输入框、代码块）字号完全独立可调。
-- **细粒度排版控制**：
-  - 侧边栏字号（10px ~ 24px，默认 14px）
-  - 对话正文字号（11px ~ 36px，默认 15px）
-  - 折叠与思考字号（独立开关控制，开启后支持 9px ~ 24px 微调，关闭时跟随正文 85% 等比自适应）
-  - 代码块字号（10px ~ 28px，默认 13px）
-  - 正文行高比例（1.0 ~ 2.6，默认 1.6）
-  - 自定义界面字体族（UI Font Family）与代码等宽字体族（Code Font Family）
-- **Markdown 排版系统强化**：各级标题（H1~H6）依据正文字号动态梯次递增放大，表格单元格字号与行高与正文严格 1:1 同步，确保排版主次分明、规整美观。
-- **开放自由输入**：除平滑滑块外，数值输入框允许直接手输任意目标数值。
-- **原生弹窗无缝集成**：在官方设置弹窗（`⚙️ Settings`）左侧菜单中无缝挂载「Font Settings」标签页，体验与原生功能浑然一体。
-- **即时响应与持久化**：调节毫秒级即时生效，配置持久化保存，重启应用不丢失。
+- **左右双侧独立缩放**：左侧工作区侧边栏（项目树、会话列表）与右侧主工作区（对话正文、输入框、代码块）字号解耦独立控制。
+- **细粒度排版参数矩阵**：
+  - **侧边栏字号**：`10px ~ 24px`（默认 `14px`）
+  - **对话正文字号**：`11px ~ 36px`（默认 `15px`）
+  - **代码字号 1:1 严格绑定**：代码块（`pre`、`code`、Monaco 编辑器）字号直接锁定对话正文，等比同步缩放，消除阅读割裂感
+  - **折叠与思考字号**：支持独立开关控制；关闭时跟随正文 85% 等比自适应，开启后支持 `9px ~ 24px` 独立微调
+  - **正文行高比例**：`1.0 ~ 2.6`（默认 `1.6`）
+- **Markdown 排版系统强化**：各级标题（H1~H6）按正文字号梯度梯次递增放大，表格单元格字号与行高与正文严格 1:1 同步，层次分明规整。
+- **滑块背景穿透模式 (Ghost Peeking Mode)**：拖拽滑块时遮罩层与弹窗背景全透明穿透，仅保留当前活动滑块与浮动数值胶囊，直视真实排版变化，松开平滑过渡复原。
+- **开放自由数值微调**：除平滑滑块外，输入框支持键盘手输任意目标数值并即时生效。
+- **双语自适应切换**：支持中文与英文双语一键切换，侧栏导航项与主标题永久锁定官方标准英文「`Font Settings`」，与宿主原生风格保持一致。
 
 ---
 
-## 安装与使用
+## 本地手动安装与管理控制台
 
-### 1. 启动管理器或安装插件
-本项目管理脚本基于 Python 3 标准库开发，**零第三方依赖**，无需通过 pip 安装任何外部包。在项目目录下直接运行：
+若已将代码克隆至本地，可直接通过跨平台管理脚本 [`manage.py`](manage.py) 进行管理：
+
+### 1. 启动交互式控制台
+
 ```bash
 python3 manage.py
 ```
-*(若环境已配置 `uv`，亦可直接执行 `uv run manage.py`)*
+*(若环境中已配置 `uv`，亦可直接执行 `uv run manage.py`)*
 
-终端将自动弹出交互式数字菜单，按提示输入 `1` 即可一键完成安装与启用；也可以直接通过命令行参数执行：
-```bash
-python3 manage.py install
-```
-
-### 2. 重启 Antigravity
-完全退出并重新打开 Antigravity 客户端。
-
-### 3. 打开设置调节
-1. 点击主界面左下角的 **`⚙️ Settings`** 按钮（或按快捷键 `Cmd+,`）。
-2. 在左侧菜单中点击 **「Font Settings」**。
-3. 拖动滑块或输入数值，左右两侧界面字体即时发生变化。
-
----
-
-## 管理命令
-
-直接运行 `python3 manage.py`（或 `uv run manage.py`）进入数字控制台，或通过参数直接执行：
-
-| 操作 | 常用命令 | 说明 |
-| :--- | :--- | :--- |
-| **交互控制台** | `python3 manage.py` | 启动极简交互菜单，按数字键 [0-5] 选取操作 |
-| 查看状态 | `python3 manage.py status` | 查看插件安装、字号配置数据与后台引擎状态 |
-| 安装启用 | `python3 manage.py install` | 建立软链接并在配置中启用 |
-| 启用插件 | `python3 manage.py enable` | 激活插件并自动继承已保存的历史字体配置 |
-| 禁用插件 | `python3 manage.py disable` | 暂时停用插件并释放进程，完整保留字体配置 |
-| 自动化测试 | `python3 manage.py test` | 运行端到端自动化测试链路，验证装配、CDP 连通性、CSS 规则与计算样式 |
-| 彻底卸载 | `python3 manage.py uninstall` | 纯净卸载：清理软链接、配置条目、运行数据及系统残留空文件夹（零残留） |
-
----
-
-## 项目结构
+终端将弹出交互式数字菜单，按数字键 `[0-6]` 选择对应操作：
 
 ```text
-Antigravity-font-settings/
-├── plugin.json              # Antigravity 插件清单
-├── manage.py                # 跨平台一键安装/管理工具（零外部依赖）
-├── ARCHITECTURE.md          # 系统架构设计与 Mermaid 交互时序图
-├── assets/
-│   └── logo.svg             # 插件图标
-├── sidecars/
-│   └── engine/
-│       ├── sidecar.json     # 后台服务清单
-│       ├── main.mjs         # CDP 自动化发现、模块动态装配与热重载服务
-│       └── client/          # 前端注入层模块化源码目录
-│           ├── types.d.ts   # TypeScript 接口定义（偏好模型、多语言与 RPC 接口）
-│           ├── styles.css   # 原生 CSS 排版样式表（变量、滑块、层级与作用域）
-│           ├── i18n.js      # 中英文双语字典与助手函数 (带 // @ts-check)
-│           └── panel.js     # 设置面板 DOM 挂载、双向数据绑定与 Observer
-└── README.md
+========================================================
+         Antigravity 字体设置插件管理器 (v1.1.0)         
+========================================================
+  [1] 安装并启用插件 (Install)
+  [2] 彻底卸载插件 (Uninstall - 清理所有配置与数据)
+  [3] 查看当前状态 (Status - 含已存字号与运行状态)
+  [4] 启用插件 (Enable - 激活并恢复历史字体设置)
+  [5] 禁用插件 (Disable - 暂时停用，保留字体设置)
+  [6] 运行自动化全链路测试 (Test)
+  [0] 退出管理器 (Exit)
+========================================================
 ```
+
+### 2. 常用命令行指令
+
+| 业务诉求 | 推荐命令 | 行为说明 |
+| :--- | :--- | :--- |
+| **快速安装并启用** | `python3 manage.py install` | 自动建立软链接并在 `config.json` 中激活 |
+| **状态深度诊断** | `python3 manage.py status` | 输出插件安装状态、持久化字号配置、CDP 端口与后台进程 |
+| **启用插件** | `python3 manage.py enable` | 恢复插件挂载，自动继承本地已保存的历史字体配置 |
+| **停用插件** | `python3 manage.py disable` | 暂停插件并释放后台引擎进程，完整保留字体配置 |
+| **运行全链路测试** | `python3 manage.py test` | 执行端到端测试门禁，验证模块装配、CDP 会话与像素渲染 |
+| **彻底纯净卸载** | `python3 manage.py uninstall` | 5 步深度清理：移除软链接、注销配置、清除数据缓存与残留 |
+
+---
+
+## 许可证 (License)
+
+本项目采用 [MIT 许可证](LICENSE) 开源发布。

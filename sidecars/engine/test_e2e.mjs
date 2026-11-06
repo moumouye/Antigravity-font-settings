@@ -141,12 +141,9 @@ async function runE2ETest() {
         const targetPrefs = {
           sidebarFontSize: ${step.sidebar},
           mainFontSize: ${step.main},
-          codeFontSize: 16,
           lineHeight: 1.6,
           customThoughtFontSize: false,
           thoughtFontSize: 13,
-          fontFamily: '',
-          codeFontFamily: '',
           language: 'zh'
         };
 
@@ -160,7 +157,7 @@ async function runE2ETest() {
             :root {
               --agy-font-sidebar: ${step.sidebar}px;
               --agy-font-main: ${step.main}px;
-              --agy-font-code: 16px;
+              --agy-font-code: var(--agy-font-main);
               --agy-font-thought: calc(var(--agy-font-main) * 0.85);
               --agy-font-line-height: 1.6;
             }
@@ -175,10 +172,14 @@ async function runE2ETest() {
 
         const mainP = document.querySelector('.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\\\[1px\\\\]) p') ||
                       document.querySelector('[class*="user-input-step"] p');
+        const mainCode = document.querySelector('.relative.flex.w-full.h-full > div:not(.bg-sidebar):not(.w-\\\\[1px\\\\]) code:not([data-testid*="-step"] code)') ||
+                         document.querySelector('[class*="code-block"]') ||
+                         document.querySelector('pre code');
         const sbItem = document.querySelector('body > #root .bg-sidebar:not([role="dialog"] *):not(.settings-modal-container *) .text-sm');
 
         return {
           actualP: mainP ? window.getComputedStyle(mainP).fontSize : null,
+          actualCode: mainCode ? window.getComputedStyle(mainCode).fontSize : null,
           actualSb: sbItem ? window.getComputedStyle(sbItem).fontSize : null
         };
       })()`,
@@ -188,10 +189,16 @@ async function runE2ETest() {
     const val = stepResult.result?.value;
     console.log(`- 测试步: [${step.name}]`);
     console.log(`  正文期望: ${step.main}px -> 实际渲染: ${val.actualP}`);
+    if (val.actualCode) {
+      console.log(`  代码期望: ${step.main}px (统一正文) -> 实际渲染: ${val.actualCode}`);
+    }
     console.log(`  侧栏期望: ${step.sidebar}px -> 实际渲染: ${val.actualSb}`);
 
     if (val.actualP !== `${step.main}px`) {
       throw new Error(`正文字号断言失败: 期望 ${step.main}px，实际为 ${val.actualP}`);
+    }
+    if (val.actualCode && val.actualCode !== `${step.main}px`) {
+      throw new Error(`代码字号断言失败: 期望与正文统一为 ${step.main}px，实际为 ${val.actualCode}`);
     }
     if (val.actualSb !== `${step.sidebar}px`) {
       throw new Error(`侧栏字号断言失败: 期望 ${step.sidebar}px，实际为 ${val.actualSb}`);
@@ -204,12 +211,9 @@ async function runE2ETest() {
       const userPrefs = {
         sidebarFontSize: 16,
         mainFontSize: 19,
-        codeFontSize: 19,
         lineHeight: 1.65,
         customThoughtFontSize: false,
         thoughtFontSize: 13,
-        fontFamily: '',
-        codeFontFamily: '',
         language: 'zh'
       };
       localStorage.setItem('antigravity_font_settings_v1', JSON.stringify(userPrefs));

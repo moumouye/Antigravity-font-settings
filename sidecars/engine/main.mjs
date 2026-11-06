@@ -34,12 +34,9 @@ async function loadPrefs() {
   return {
     sidebarFontSize: 14,
     mainFontSize: 15,
-    codeFontSize: 13,
     lineHeight: 1.6,
     customThoughtFontSize: false,
     thoughtFontSize: 13,
-    fontFamily: '',
-    codeFontFamily: '',
     language: 'en'
   };
 }

@@ -5,12 +5,9 @@
 export interface FontPreferences {
   sidebarFontSize: number;
   mainFontSize: number;
-  codeFontSize: number;
   lineHeight: number;
   customThoughtFontSize: boolean;
   thoughtFontSize: number;
-  fontFamily: string;
-  codeFontFamily: string;
   language: 'en' | 'zh';
 }
 
@@ -28,16 +25,9 @@ export interface I18nTextMap {
   thoughtAutoTag: string;
   thoughtCustomTag: string;
   thoughtCustomLabel: string;
-  codeTitle: string;
-  codeDesc: string;
   sectionSidebar: string;
   sidebarTitle: string;
   sidebarDesc: string;
-  sectionFontFamily: string;
-  uiFontLabel: string;
-  uiFontDesc: string;
-  codeFontLabel: string;
-  codeFontDesc: string;
   resetBtn: string;
   langLabel: string;
   langEnBtn: string;

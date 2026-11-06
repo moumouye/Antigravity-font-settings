@@ -6,6 +6,9 @@
 
 ## [Unreleased]
 
+- ✨ 新增跨平台一键安装与彻底卸载脚本：提供 `install.sh` / `uninstall.sh` 与 Windows `install.ps1` / `uninstall.ps1`，支持一行 `curl` / `irm` 自动化无残留安装与卸载
+- ✨ 统一代码字号至对话正文：彻底收敛代码块字号（`pre`、`code`、Monaco 编辑器）直接绑定对话正文字号（`--agy-font-main`），移除冗余的独立代码字号调节滑块，实现代码与正文 1:1 严格等比实时缩放
+- ✨ 精简设置面板并移除自定义字体族：彻底移除自定义字体族输入框与样式注入，排版字体全面回归系统原生默认字体栈，消除跨平台字体缺损与排版异常隐患
 - ✨ 新增「滑块背景透明穿透模式 (Slider Ghost Peeking Mode)」：彻底移除冗余占地的静态预览卡片，恢复面板原生精致紧凑感；当用户按下/拖动任意滑块时，遮罩层与弹窗背景即刻全透明穿透，仅保留当前活动滑块与浮动数值胶囊（`19 px`），直视底层真实对话与代码块 60fps 即时缩放，松开指针平滑过渡恢复正常界面
 - ✨ 原生 TypeScript 类型安全约束：引入 `types.d.ts` 声明文件并配合 `// @ts-check`，在零 npm 依赖与零本地 `node_modules` 的前提下，达成 100% 严格静态类型检查与智能属性提示
 - 🐛 修复宿主更新与窗口重载后插件失效缺陷：解决 Antigravity 升级/重启或页面重载后 CDP 执行上下文重建导致脚本丢失的问题；补齐 `Page.enable` 协议激活与 `DOMContentLoaded` 安全挂载守卫，并在 Sidecar 轮询中引入 3 秒全自愈心跳与 `Appearance` / `外观` 双语弹窗容错侦测，杜绝设置面板消失与字号控制断联
@@ -14,13 +17,16 @@
 - 💄 像素级对齐官方设置视觉规范：全面对齐 Application 原生面板结构，采用 `text-sm font-medium text-foreground` 分区标题、`text-sm` 紧凑行高与 `py-2 px-3` 行内边距，消除字号、字重与字色不匹配问题
 - 💄 规范设置侧栏与面板主标题行为：设置侧栏导航项及面板主标题永久锁定官方标准英文「`Font Settings`」，无论中英文语言切换均与宿主 `General` / `Application` / `Appearance` 保持原生一致性；面板内各项具体配置、描述及单位无缝切换中文
 - 💄 优化滑块轨道视觉反馈：轨道理线采用自适应边框色变量（`var(--border)`），在浅色模式与深色模式下均清晰可见且不突兀
-- 💄 精简字体族配置说明文本，消除右侧提示文案截断省略（`...`），保持左右对齐与行高舒适度
 - 💄 扩充设置面板底部间距（`pb-12`），优化中英语言切换与恢复默认设置按钮的视距与交互体验
 - 🛡️ 对话排版样式深度隔离：严格限定 Markdown 标题与表格的字号乘数规则不作用于任何弹窗环境（`:not([role="dialog"] *):not(.settings-modal-container *)`），杜绝样式向设置窗口与宿主自身界面的外溢污染
+- ♻️ 精简偏好模型与样式规则：从 `FontPreferences`、默认预设及 Sidecar 存储中彻底清理 `codeFontSize`、`fontFamily` 与 `codeFontFamily`，移除样式表中 `html.agy-has-ui-font` 与 `html.agy-has-code-font` 冗余选择器
 - ♻️ 前端注入层工程化解耦重构：建立独立源码归类目录 `sidecars/engine/client/`，将原单文件解耦为原生样式表（`styles.css`）、双语字典（`i18n.js`）与面板控制器（`panel.js`），消除大单文件心智负担并大幅降低 AI 维护时的上下文读取开销
 - ⚡ 引擎层原生动态装配与免重启热重载升级：`main.mjs` 支持基于 Node.js 标准库的极速模块内存合成与文件指纹比对，源码保存即刻触发 3 秒免重启热重载，彻底移除旧版冗余单文件镜像
+- 🧪 升级端到端测试断言体系：`test_e2e.mjs` 新增代码块字号统一断言，验证正文调节时代码元素与正文像素级 1:1 等比缩放，偏好测试载荷同步解耦废弃字段
 - 🧪 建立端到端自动化测试体系：新增 `test_e2e.mjs` 全链路测试套件并集成至 `manage.py test` 与数字控制台，覆盖源码装配、CDP 会话、45 条核心规则解析完整性与 `getComputedStyle` 像素级动态断言
 - 🔧 优化端到端测试 CDP 端口解析：`test_e2e.mjs` 改为动态读取宿主 `DevToolsActivePort` 端口文件，彻底消除端口变更导致连接拒绝的问题
+- 📝 更新特性文档与架构设计：同步更新 `README.md`、`ARCHITECTURE.md` 与 `plugin.json`，修正功能清单并移除自定义字体族相关说明
+- 📝 构建四维真理库与工程治理体系：建立集中式 `docs/`（`boundaries.md`、`contracts.md`、`anti-patterns.md`、`verification.md`），并在 `ARCHITECTURE.md` 中引入意图-文档路由表（Documentation Sitemap），在 `AGENTS.md` 中固化代码-文档活体映射锁与单入口测试门禁
 
 ---
 

@@ -93,23 +93,26 @@ def install_plugin():
     print("\n--- [1/2] 安装插件软链接 ---")
     PLUGINS_DIR.mkdir(parents=True, exist_ok=True)
 
-    if PLUGIN_TARGET.exists() or PLUGIN_TARGET.is_symlink():
-        try:
-            if PLUGIN_TARGET.is_symlink():
-                PLUGIN_TARGET.unlink()
-            else:
-                shutil.rmtree(PLUGIN_TARGET)
-            print(f"[OK] 已清理旧安装路径: {PLUGIN_TARGET}")
-        except Exception as e:
-            print(f"[ERROR] 清理旧安装失败: {e}")
-            return
+    if SOURCE_DIR.resolve() == PLUGIN_TARGET.resolve():
+        print(f"[INFO] 当前已位于目标插件目录 ({PLUGIN_TARGET})，跳过软链接创建。")
+    else:
+        if PLUGIN_TARGET.exists() or PLUGIN_TARGET.is_symlink():
+            try:
+                if PLUGIN_TARGET.is_symlink():
+                    PLUGIN_TARGET.unlink()
+                else:
+                    shutil.rmtree(PLUGIN_TARGET)
+                print(f"[OK] 已清理旧安装路径: {PLUGIN_TARGET}")
+            except Exception as e:
+                print(f"[ERROR] 清理旧安装失败: {e}")
+                return
 
-    try:
-        PLUGIN_TARGET.symlink_to(SOURCE_DIR, target_is_directory=True)
-        print(f"[OK] 已创建软链接: {PLUGIN_TARGET} -> {SOURCE_DIR}")
-    except OSError:
-        shutil.copytree(SOURCE_DIR, PLUGIN_TARGET, symlinks=True)
-        print(f"[OK] 已拷贝插件到: {PLUGIN_TARGET}")
+        try:
+            PLUGIN_TARGET.symlink_to(SOURCE_DIR, target_is_directory=True)
+            print(f"[OK] 已创建软链接: {PLUGIN_TARGET} -> {SOURCE_DIR}")
+        except OSError:
+            shutil.copytree(SOURCE_DIR, PLUGIN_TARGET, symlinks=True)
+            print(f"[OK] 已拷贝插件到: {PLUGIN_TARGET}")
 
     print("\n--- [2/2] 注册并启用插件 ---")
     config = load_json(CONFIG_FILE, {})
@@ -232,12 +235,11 @@ def check_status():
             prefs = json.loads(PREFS_FILE.read_text(encoding="utf-8"))
             main_sz = prefs.get("mainFontSize", 15)
             side_sz = prefs.get("sidebarFontSize", 14)
-            code_sz = prefs.get("codeFontSize", 13)
             lh = prefs.get("lineHeight", 1.6)
             custom_thought = prefs.get("customThoughtFontSize", False)
             thought_sz = prefs.get("thoughtFontSize", 13)
             thought_desc = f"{thought_sz}px (独立)" if custom_thought else "等比自适应 (85%)"
-            prefs_summary = f"正文 {main_sz}px | 侧栏 {side_sz}px | 折叠/思考 {thought_desc} | 代码 {code_sz}px | 行高 {lh}"
+            prefs_summary = f"正文与代码 {main_sz}px | 侧栏 {side_sz}px | 折叠/思考 {thought_desc} | 行高 {lh}"
         except Exception:
             prefs_summary = "已保存 (读取异常)"
 
