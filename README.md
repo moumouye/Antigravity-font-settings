@@ -46,8 +46,10 @@ curl.exe -fsSL https://raw.githubusercontent.com/moumouye/Antigravity-font-setti
 
 ### 🚀 使用方法
 
-1. **执行安装**：在系统终端中运行上述对应系统的一键安装命令；
-2. **重启客户端**：完全退出并重新打开 Antigravity 桌面应用；
+1. **执行安装**：在系统终端中运行上述对应系统的一键安装命令（会自动配置共享无侵入 CDP 引导入口，**不修改原版 `Antigravity.app` 或 `app.asar`**）；
+2. **重启客户端**：
+   - **macOS**：安装时已注册登录自启（`com.moumouye.antigravity-cdp`）并创建 `/Applications/Antigravity Launcher.app`。完全退出原应用后，请通过 **「Antigravity Launcher」** 打开即可生效（建议替换 Dock 原版图标）；
+   - **Windows**：安装时已自动为桌面 / 开始菜单 / 任务栏快捷方式追加 `--remote-debugging-port=0 --remote-debugging-address=127.0.0.1` 参数。若之前固定在任务栏的旧图标未生效，请取消固定后从桌面重新固定；客户端更新后若覆盖了快捷方式，运行 `python manage.py setup-cdp` 即可恢复；
 3. **打开设置调节**：
    - 按下快捷键 `Cmd+,`（macOS）或 `Ctrl+,`（Windows）；
    - 在左侧导航菜单中点击 **「Font Settings」** 即可实时调整。
@@ -121,8 +123,9 @@ python3 manage.py
 
 | 业务诉求 | 推荐命令 | 行为说明 |
 | :--- | :--- | :--- |
-| **快速安装并启用** | `python3 manage.py install` | 自动建立软链接并在 `config.json` 中激活 |
-| **状态深度诊断** | `python3 manage.py status` | 输出插件安装状态、持久化字号配置、CDP 端口与后台进程 |
+| **快速安装并启用** | `python3 manage.py install` | 自动建立软链接、启用配置并配置共享 CDP 启动入口 |
+| **配置/修复 CDP** | `python3 manage.py setup-cdp` | 单独配置或修复外部无侵入 CDP 启动入口（macOS Launcher / Win 快捷方式） |
+| **状态深度诊断** | `python3 manage.py status` | 输出插件安装状态、持久化字号配置、共享 CDP 引导与后台进程 |
 | **启用插件** | `python3 manage.py enable` | 恢复插件挂载，自动继承本地已保存的历史字体配置 |
 | **停用插件** | `python3 manage.py disable` | 暂停插件并释放后台引擎进程，完整保留字体配置 |
 | **运行全链路测试** | `python3 manage.py test` | 执行端到端测试门禁，验证模块装配、CDP 会话与像素渲染 |

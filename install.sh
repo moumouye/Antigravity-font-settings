@@ -48,6 +48,7 @@ elif command -v node >/dev/null 2>&1; then
     fs.writeFileSync(cfgPath, JSON.stringify(cfg, null, 2) + '\n');
     "
     echo "[OK] 已通过 Node.js 成功注册插件到 config.json。"
+    echo "[WARN] 未检测到 python3，未自动配置 CDP 调试启动入口；请安装 Python 3 后执行: python3 \"$TARGET_DIR/manage.py\" setup-cdp"
 else
     echo "[WARN] 未检测到 python3 或 node，请手动运行 manage.py 完成注册。"
 fi

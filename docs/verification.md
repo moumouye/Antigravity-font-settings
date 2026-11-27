@@ -11,6 +11,11 @@
 uv run manage.py test
 ```
 
+*仅运行离线跨平台单元测试（含共享 CDP 引导逻辑与 GitHub Actions CI，不依赖运行中的 Antigravity 窗口）*：
+```bash
+python3 manage.py test --unit-only
+```
+
 *备选原生入口*：
 ```bash
 node sidecars/engine/test_e2e.mjs

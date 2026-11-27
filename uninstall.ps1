@@ -1,4 +1,4 @@
-# Antigravity Font Settings - Quick One-line Uninstaller for Windows PowerShell
+﻿# Antigravity Font Settings - Quick One-line Uninstaller for Windows PowerShell
 $ErrorActionPreference = "SilentlyContinue"
 
 $ConfigDir = Join-Path $HOME ".gemini\config"
@@ -11,6 +11,20 @@ $PluginData = Join-Path $HOME ".gemini\antigravity\plugin_data\antigravity-font-
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host "    Antigravity Font Settings - Windows 一键卸载程序      " -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
+
+$ManagePy = Join-Path $TargetDir "manage.py"
+if (Test-Path $ManagePy) {
+    if (Get-Command python -ErrorAction SilentlyContinue) {
+        python $ManagePy uninstall
+        exit $LASTEXITCODE
+    } elseif (Get-Command python3 -ErrorAction SilentlyContinue) {
+        python3 $ManagePy uninstall
+        exit $LASTEXITCODE
+    } elseif (Get-Command py -ErrorAction SilentlyContinue) {
+        py -3 $ManagePy uninstall
+        exit $LASTEXITCODE
+    }
+}
 
 Write-Host "[1/4] 正在终止后台 Sidecar 引擎进程..." -ForegroundColor Yellow
 Get-Process | Where-Object { 

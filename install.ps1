@@ -1,4 +1,4 @@
-# Antigravity Font Settings - Quick One-line Installer for Windows PowerShell
+﻿# Antigravity Font Settings - Quick One-line Installer for Windows PowerShell
 $ErrorActionPreference = "Stop"
 
 $RepoName = if ($env:ANTIGRAVITY_FONT_REPO) { $env:ANTIGRAVITY_FONT_REPO } else { "moumouye/Antigravity-font-settings" }
@@ -40,6 +40,8 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
     python (Join-Path $TargetDir "manage.py") install
 } elseif (Get-Command python3 -ErrorAction SilentlyContinue) {
     python3 (Join-Path $TargetDir "manage.py") install
+} elseif (Get-Command py -ErrorAction SilentlyContinue) {
+    py -3 (Join-Path $TargetDir "manage.py") install
 } elseif (Get-Command node -ErrorAction SilentlyContinue) {
     node -e "
     const fs = require('fs');
@@ -54,6 +56,7 @@ if (Get-Command python -ErrorAction SilentlyContinue) {
     fs.writeFileSync(cfgPath, JSON.stringify(cfg, null, 2) + '\n');
     "
     Write-Host "[OK] 已通过 Node.js 成功注册插件到 config.json。" -ForegroundColor Green
+    Write-Host "[WARN] 未检测到 Python 3，未自动注入快捷方式 CDP 参数；请安装 Python 3 后执行: python `"$TargetDir\manage.py`" setup-cdp" -ForegroundColor Yellow
 } else {
     Write-Host "[WARN] 未检测到 python 或 node，请手动运行 manage.py 完成注册。" -ForegroundColor Red
 }

@@ -40,7 +40,7 @@ sequenceDiagram
     participant Client as 🎨 渲染注入层 (Page Context)
     participant Storage as 💾 本地存储 (preferences.json)
 
-    Engine->>Host: 读取 DevToolsActivePort 端口文件
+    Engine->>Host: 读取 DevToolsActivePort 端口文件（Windows 兼容 %APPDATA% 与 %LOCALAPPDATA%）
     Host-->>Engine: 返回调试端口 (如 54321)
     Engine->>Host: GET http://127.0.0.1:{port}/json/list
     Host-->>Engine: 返回活跃渲染页面列表 (type=page)

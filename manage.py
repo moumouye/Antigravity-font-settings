@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Antigravity Font Settings - Plugin Lifecycle Manager."""
 import argparse
+import importlib.util
 import json
 import os
 import shutil
@@ -19,6 +20,13 @@ CONFIG_FILE = CONFIG_DIR / "config.json"
 SIDECAR_DATA_DIR = HOME / ".gemini" / "antigravity" / "sidecar_data" / "antigravity-font-settings"
 PLUGIN_DATA_DIR = HOME / ".gemini" / "antigravity" / "plugin_data" / "antigravity-font-settings"
 PREFS_FILE = SIDECAR_DATA_DIR / "engine" / "data" / "preferences.json"
+
+
+def cdp_module():
+    spec = importlib.util.spec_from_file_location('font_cdp_bootstrap', SOURCE_DIR / 'compat' / 'cdp_bootstrap.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def load_json(path: Path, default=None):
@@ -120,6 +128,7 @@ def install_plugin():
     plugins["antigravity-font-settings"] = {"enabled": True}
     save_json(CONFIG_FILE, config)
     print(f"[OK] 已在 {CONFIG_FILE} 中启用插件。")
+    cdp_module().ensure_cdp_bootstrap("antigravity-font-settings", home=HOME)
 
     print("\n[完成] 插件已安装并启用！")
     print("提示: 若 Antigravity 正在运行，请重启客户端以加载字体设置插件。")
@@ -196,6 +205,8 @@ def uninstall_plugin(deep: bool = True):
         shutil.rmtree(local_sidecar_logs)
         print(f"[OK] 已清理本地临时日志目录: {local_sidecar_logs}")
 
+    cdp_module().remove_cdp_bootstrap("antigravity-font-settings", home=HOME)
+
     print("\n[完成] 彻底纯净卸载完毕！所有相关文件及对应空文件夹已全部删除，系统内零残留。")
 
 
@@ -243,22 +254,14 @@ def check_status():
         except Exception:
             prefs_summary = "已保存 (读取异常)"
 
-    # Check DevTools port
-    if sys.platform == "darwin":
-        profile = HOME / "Library" / "Application Support" / "Antigravity"
-    elif sys.platform == "win32":
-        profile = Path(os.environ.get("LOCALAPPDATA", str(HOME / "AppData" / "Local"))) / "Antigravity"
+    cdp_info = cdp_module().inspect_cdp_status(home=HOME)
+    if cdp_info.get("cdpReady"):
+        port_status = f"运行中 (CDP 调试端口: {cdp_info['port']})"
+    elif cdp_info.get("port"):
+        port_status = f"端口文件残留但未就绪 ({cdp_info['port']})"
     else:
-        profile = Path(os.environ.get("XDG_CONFIG_HOME", str(HOME / ".config"))) / "Antigravity"
-
-    port_file = profile / "DevToolsActivePort"
-    port_status = "未运行"
-    if port_file.exists():
-        try:
-            port = port_file.read_text().splitlines()[0].strip()
-            port_status = f"运行中 (CDP 调试端口: {port})"
-        except Exception:
-            port_status = "运行中"
+        port_status = "未开启调试端口"
+    cdp_boot = "已配置" if cdp_info.get("bootstrapInstalled") else "未配置"
 
     print("\n========================================================")
     print("          Antigravity 字体设置 - 状态总览               ")
@@ -267,12 +270,21 @@ def check_status():
     print(f"  启用状态:       {'已启用' if is_enabled else '已禁用'}")
     print(f"  后台引擎进程:   {'运行中 (PID: ' + ', '.join(map(str, pids)) + ')' if pids else '未启动'}")
     print(f"  用户字体配置:   {prefs_summary}")
+    print(f"  共享 CDP 引导:  {cdp_boot}")
     print(f"  宿主应用状态:   {port_status}")
     print("========================================================")
 
 
-def run_tests():
-    """Run End-to-End automated testing suite via test_e2e.mjs."""
+def run_tests(unit_only: bool = False):
+    """Run unit tests and optional live E2E automated testing suite."""
+    tests_dir = SOURCE_DIR / "tests"
+    if tests_dir.is_dir():
+        print("\n--- 正在运行跨平台单元测试 ---")
+        unit_res = subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", str(tests_dir), "-v"], cwd=SOURCE_DIR)
+        if unit_res.returncode != 0:
+            return False
+    if unit_only:
+        return True
     test_script = SOURCE_DIR / "sidecars" / "engine" / "test_e2e.mjs"
     if not test_script.exists():
         print(f"[ERROR] 未找到测试脚本: {test_script}")
@@ -337,8 +349,13 @@ def main():
         "action",
         nargs="?",
         default=None,
-        choices=["install", "uninstall", "enable", "disable", "status", "test"],
+        choices=["install", "uninstall", "enable", "disable", "status", "setup-cdp", "test"],
         help="Action to execute (leave empty for interactive menu)",
+    )
+    parser.add_argument(
+        "--unit-only",
+        action="store_true",
+        help="Run only offline unit tests (skip live Antigravity E2E suite)",
     )
     args = parser.parse_args()
 
@@ -354,8 +371,11 @@ def main():
         set_enabled(False)
     elif args.action == "status":
         check_status()
+    elif args.action == "setup-cdp":
+        cdp_module().ensure_cdp_bootstrap("antigravity-font-settings", home=HOME)
     elif args.action == "test":
-        run_tests()
+        ok = run_tests(unit_only=args.unit_only)
+        raise SystemExit(0 if ok else 1)
 
 
 if __name__ == "__main__":

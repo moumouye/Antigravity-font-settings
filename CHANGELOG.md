@@ -6,6 +6,9 @@
 
 ## [Unreleased]
 
+- ✨ 新增跨平台共享无侵入 CDP 引导机制（`compat/cdp_bootstrap.py`）：适配新版 Antigravity 默认关闭 CDP 的策略，在不修改原应用 `app.asar` 与签名的前提下，于 macOS 自动配置登录自启与 `Antigravity Launcher.app`，于 Windows 自动为快捷方式注入 `--remote-debugging-port=0 --remote-debugging-address=127.0.0.1` 并支持多插件引用计数卸载还原
+- ✨ 新增 `manage.py setup-cdp` 快捷命令及 `status` 共享 CDP 引导状态展示
+- 🐛 修复 Windows 环境下仅检索 `%LOCALAPPDATA%\Antigravity` 导致遗漏 `%APPDATA%\Antigravity\DevToolsActivePort` 的端口发现兼容缺陷
 - ✨ 新增跨平台一键安装与彻底卸载脚本：提供 `install.sh` / `uninstall.sh` 与 Windows `install.ps1` / `uninstall.ps1`，支持一行 `curl` / `irm` 自动化无残留安装与卸载
 - ✨ 统一代码字号至对话正文：彻底收敛代码块字号（`pre`、`code`、Monaco 编辑器）直接绑定对话正文字号（`--agy-font-main`），移除冗余的独立代码字号调节滑块，实现代码与正文 1:1 严格等比实时缩放
 - ✨ 精简设置面板并移除自定义字体族：彻底移除自定义字体族输入框与样式注入，排版字体全面回归系统原生默认字体栈，消除跨平台字体缺损与排版异常隐患

@@ -9,9 +9,9 @@
 系统开发与维护必须严格遵守以下物理红线，严禁破坏：
 
 1. **宿主非侵入隔离红线 (Host Non-Invasive Invariant)**：
-   * 仅依托 Antigravity 原生 Sidecar 运行机制与 Chrome DevTools Protocol (CDP) 调试桥接实现页面注入与双向通信；
-   * 严禁修改 Electron 应用程序二进制、解包修改 `app.asar` 或修改宿主安装目录下的任何系统级文件；
-   * 插件卸载或禁用后，宿主外观与功能必须完全回归官方原始状态。
+   * 仅依托 Antigravity 原生 Sidecar 运行机制、外部无侵入 CDP 启动引导（[`compat/cdp_bootstrap.py`](../compat/cdp_bootstrap.py)）与 Chrome DevTools Protocol (CDP) 调试桥接实现页面注入与双向通信；
+   * 严禁修改 Electron 应用程序二进制、解包修改 `app.asar`、重签名原应用或修改宿主安装目录下的任何系统级文件；
+   * 卸载或禁用插件后，宿主外观与功能必须完全回归官方原始状态；共享 CDP 引导采用引用计数管理，仅当所有依赖插件均卸载时才清理启动入口。
 
 2. **零外部依赖与零安装红线 (Zero External Dependencies)**：
    * **管理端 (CLI)**：[`manage.py`](file:///Users/yemou/Documents/extentions/Antigravity-font-settings/manage.py) 必须严格基于 Python 3 标准库，严禁引入第三方 `pip` 依赖；

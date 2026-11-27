@@ -13,6 +13,11 @@ echo "========================================================"
 echo "    Antigravity Font Settings - 快速一键卸载程序        "
 echo "========================================================"
 
+if [ -f "$TARGET_DIR/manage.py" ] && command -v python3 >/dev/null 2>&1; then
+    python3 "$TARGET_DIR/manage.py" uninstall
+    exit 0
+fi
+
 echo "[1/4] 正在终止后台 Sidecar 引擎进程..."
 pkill -f "antigravity-font-settings.*main.mjs" 2>/dev/null || true
 pkill -f "sidecars/engine/main.mjs" 2>/dev/null || true
