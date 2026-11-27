@@ -4,7 +4,7 @@
 
 ---
 
-## [Unreleased]
+## [1.2.0] - 2026-11-27
 
 - ✨ 新增跨平台共享无侵入 CDP 引导机制（`compat/cdp_bootstrap.py`）：适配新版 Antigravity 默认关闭 CDP 的策略，在不修改原应用 `app.asar` 与签名的前提下，于 macOS 自动配置登录自启与 `Antigravity Launcher.app`，于 Windows 自动为快捷方式注入 `--remote-debugging-port=0 --remote-debugging-address=127.0.0.1` 并支持多插件引用计数卸载还原
 - ✨ 新增 `manage.py setup-cdp` 快捷命令及 `status` 共享 CDP 引导状态展示

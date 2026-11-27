@@ -6,7 +6,7 @@
 
 **细粒度定制 Google Antigravity 桌面客户端字体大小与排版的轻量级扩展**
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg?style=flat-square)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows-brightgreen.svg?style=flat-square)](#快速安装-quick-installation)
 
@@ -107,7 +107,7 @@ python3 manage.py
 
 ```text
 ========================================================
-         Antigravity 字体设置插件管理器 (v1.1.0)         
+         Antigravity 字体设置插件管理器 (v1.2.0)         
 ========================================================
   [1] 安装并启用插件 (Install)
   [2] 彻底卸载插件 (Uninstall - 清理所有配置与数据)

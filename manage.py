@@ -305,7 +305,7 @@ def interactive_menu():
     """Display streamlined interactive numeric menu in terminal."""
     while True:
         print("\n========================================================")
-        print("         Antigravity 字体设置插件管理器 (v1.1.0)         ")
+        print("         Antigravity 字体设置插件管理器 (v1.2.0)         ")
         print("========================================================")
         print("  [1] 安装并启用插件 (Install)")
         print("  [2] 彻底卸载插件 (Uninstall - 清理所有配置与数据)")
